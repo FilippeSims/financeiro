@@ -41,7 +41,14 @@ module.exports = function (ctx) {
       //            (not treeshaking Quasar; biggest bundle size; convenient)
       all: 'auto',
 
-      components: [],
+      components: [
+        'QIcon',
+        'QBanner',
+        'QForm',
+        'QToggle',
+        'QSelect',
+        'QInput'
+      ],
       directives: [],
 
       // Quasar plugins
