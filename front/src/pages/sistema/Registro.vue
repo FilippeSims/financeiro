@@ -5,7 +5,7 @@
       <q-breadcrumbs-el label="Registro" icon="widgets" to="/sistema/registro" />
     </q-breadcrumbs>
     <div class="q-pa-md doc-container">
-      <q-form @submit="onSubmit" class="q-gutter-md">
+      <q-form @submit.prevent="save()" class="q-gutter-md" v-if="inserir === true">
         <q-input
           filled
           type="number"
@@ -31,9 +31,24 @@
         />
 
         <div>
-          <q-btn label="Enviar" type="submit" color="primary" />
+          <q-btn label="Enviar" type="submit" color="primary" class="q-mb-sm float-left"  unelevated/>
         </div>
       </q-form>
+
+      <q-btn class="q-mb-sm float-right" color="primary" icon="add_circle" label="Inserir" v-on:click="inserirShow(true)" v-if="inserir === false" unelevated/>
+      <q-btn class="q-mb-sm float-right" color="red" icon="remove_circle" label="Fechar" v-on:click="inserirShow(false)" v-else unelevated/>
+      <table border="1px" width="100%">
+        <tr>
+          <th>TituloM</th>
+          <th>TituloM</th>
+          <th>TituloM</th>
+        </tr>
+        <tr>
+          <td>Conteúdo</td>
+          <td>Conteúdo</td>
+          <td>Conteúdo</td>
+        </tr>
+      </table>
     </div>
   </q-page>
 </template>
@@ -42,7 +57,16 @@
 export default {
   data () {
     return {
-      registro: {}
+      registro: {},
+      inserir: false
+    }
+  },
+  methods: {
+    save () {
+
+    },
+    inserirShow (status) {
+      this.inserir = status
     }
   }
 }
