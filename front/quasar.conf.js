@@ -47,12 +47,15 @@ module.exports = function (ctx) {
         'QForm',
         'QToggle',
         'QSelect',
-        'QInput'
+        'QInput',
+        'QCheckbox'
       ],
       directives: [],
 
       // Quasar plugins
-      plugins: []
+      plugins: [
+        'Notify'
+      ]
     },
 
     // https://quasar.dev/quasar-cli/cli-documentation/supporting-ie

@@ -2,11 +2,9 @@ var express = require('express');
 var router = express.Router();
 const controller = require('../controllers/registroController')
 
-var rule = true
 
-if(rule === true){
-    router.get('/', controller.get)
-}
+
+router.get('/', controller.get)
 router.post('/', controller.post)
 router.delete('/:id', controller.delete)
 router.put('/:id', controller.put)

@@ -34,13 +34,24 @@ function criarRegistro(data, valor, obs, desc, callback){
 }
 
 exports.post = (req, res) =>{
-    
+    const data = new Date()
+    const valor = req.body.valorreg;
+    const obs = req.body.obsreg;
+    const desc = req.body.descreg;
+    console.log(data, valor, obs, desc)
+    criarRegistro(data, valor, obs, desc, function(err, registro){
+        if(err){
+            res.sendStatus(500)
+        } else{
+            res.sendStatus(201)
+        }
+    })
 }
 /* FIM POST*/
 
 /* DELETE */
 function deleteRegistro(id, callback){
-    db.pool.query('DELETE FROM reg WHERE nreg = $1', [id], function(err, res){
+    db.pool.query(`DELETE FROM reg WHERE nreg in (${id})`, function(err, res){
         if(err){
             callback(err)
         } else{
@@ -50,13 +61,22 @@ function deleteRegistro(id, callback){
 }
 
 exports.delete = (req, res) =>{
-    
+    const id = req.params.id
+    const arrayId = id.split(/\s*,\s*/)
+    deleteRegistro(arrayId, function(err){
+        if(err){
+            res.sendStatus(500)
+        } else{
+            res.sendStatus(204)
+        }
+    })
 }
 /* FIM DELETE */
 
 /* PUT */
-function updateRegistro(n, data, valor, obs, desc, callback){
-    db.pool.query('UPDATE reg SET dtreg = $1, valorreg = $2, obsreg = $3, descreg = $4 WHERE dtreg = $1 RETURNING *', [n, data, valor, obs, desc], function(err, res){
+function updateRegistro(id, data, valor, obs, desc, callback){
+    db.pool.query(`UPDATE reg SET dtreg = '${data}', valorreg = ${valor}, obsreg = '${obs}', descreg = '${desc}' WHERE nreg = ${id} RETURNING *`, function(err, res){
+        console.log(err)
         if (err) {
             callback(err, null)
         } else {
@@ -66,6 +86,17 @@ function updateRegistro(n, data, valor, obs, desc, callback){
 }
 
 exports.put = (req, res) =>{
-    
+    const n = req.params.id
+    const data = new Date().toUTCString()
+    const valor = req.body.valorreg
+    const obs = req.body.obsreg
+    const desc = req.body.descreg
+    updateRegistro(n, data, valor, obs, desc, function(err){
+        if (err) {
+            res.sendStatus(500)
+        } else {
+            res.sendStatus(200)
+        }
+    })
 }
 /* FIM PUT */
