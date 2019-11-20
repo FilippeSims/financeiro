@@ -10,6 +10,7 @@ var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 
 var registroRotas = require('./app/rotas/registroRotas')
+var lancRotas = require('./app/rotas/lancRotas')
 
 var app = express();
 
@@ -31,6 +32,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', indexRouter)
 app.use('/users', usersRouter)
 app.use('/api/sistema/v1/registro', registroRotas)
+app.use('/api/sistema/v1/lanc', lancRotas)
 
 
 // catch 404 and forward to error handler

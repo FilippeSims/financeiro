@@ -59,7 +59,7 @@
         <tr v-for="(registro, keyRegistro) in registros" :key="keyRegistro">
           <th> <q-checkbox  v-bind:val="registro.nreg" v-model="checkReg"/> </th>
           <th> {{ registro.nreg }} </th>
-          <th> {{ registro.dtreg }} </th>
+          <th> {{ registro.dtreg | formatDate }} </th>
           <th> {{ registro.valorreg }} </th>
           <th> {{ registro.obsreg }} </th>
           <th> {{ registro.descreg }} </th>
