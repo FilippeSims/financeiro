@@ -49,7 +49,9 @@ module.exports = function (ctx) {
         'QSelect',
         'QInput',
         'QCheckbox',
-        'QDate'
+        'QDate',
+        'QParallax',
+        'QTooltip'
       ],
       directives: [],
 

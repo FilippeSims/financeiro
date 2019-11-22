@@ -11,6 +11,7 @@ var usersRouter = require('./routes/users');
 
 var registroRotas = require('./app/rotas/registroRotas')
 var lancRotas = require('./app/rotas/lancRotas')
+var registrarUsuarioRotas = require('./app/rotas/registrarUsuarios')
 
 var app = express();
 
@@ -33,7 +34,7 @@ app.use('/', indexRouter)
 app.use('/users', usersRouter)
 app.use('/api/sistema/v1/registro', registroRotas)
 app.use('/api/sistema/v1/lanc', lancRotas)
-
+app.use('/api/sistema/v1/usuarios', registrarUsuarioRotas)
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

@@ -76,13 +76,20 @@
             <td data-label="Ação">
               <q-checkbox v-bind:val="lanc.nlanc" v-model="checkReg" />
             </td>
-            <td data-label="Número Reg">{{ lanc.regn }}</td>
-            <td data-label="Número Lanc">{{ lanc.nlanc }}</td>
-            <td data-label="Valor Lanc">{{ lanc.vlrlanc }}</td>
-            <td data-label="Data Lanc">{{ lanc.dtlanc | formatDate }}</td>
-            <td data-label="Objeto Lanc">{{ lanc.objlanc }}</td>
-            <td data-label="Descrição Lanc">{{ lanc.partelanc }}</td>
-            <td data-label="Centro Lanc">{{ lanc.centrocontalanc }}</td>
+            <td data-label="Número Reg" v-if="lanc.regn === null"><q-badge class="q-ml-sm" color="red">NULL</q-badge></td>
+            <td data-label="Número Reg" v-else>{{ lanc.regn }}</td>
+            <td data-label="Número Reg" v-if="lanc.nlanc === null"><q-badge class="q-ml-sm" color="red">NULL</q-badge></td>
+            <td data-label="Número Lanc" v-else>{{ lanc.nlanc }}</td>
+            <td data-label="Número Reg" v-if="lanc.vlrlanc === null"><q-badge class="q-ml-sm" color="red">NULL</q-badge></td>
+            <td data-label="Valor Lanc" v-else>{{ lanc.vlrlanc }}</td>
+            <td data-label="Número Reg" v-if="lanc.dtlanc === null"><q-badge class="q-ml-sm" color="red">NULL</q-badge></td>
+            <td data-label="Data Lanc" v-else>{{ lanc.dtlanc | formatDate }}</td>
+            <td data-label="Número Reg" v-if="lanc.objlanc === null"><q-badge class="q-ml-sm" color="red">NULL</q-badge></td>
+            <td data-label="Objeto Lanc" v-else>{{ lanc.objlanc }}</td>
+            <td data-label="Número Reg" v-if="lanc.partelanc === null"><q-badge class="q-ml-sm" color="red">NULL</q-badge></td>
+            <td data-label="Descrição Lanc" v-else>{{ lanc.partelanc }}</td>
+            <td data-label="Número Reg" v-if="lanc.centrocontalanc === null"><q-badge class="q-ml-sm" color="red">NULL</q-badge></td>
+            <td data-label="Centro Lanc" v-else>{{ lanc.centrocontalanc }}</td>
           </tr>
         </tbody>
       </table>

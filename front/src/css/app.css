@@ -112,3 +112,12 @@ table {
   .listReg:nth-child(odd) {
     background: rgb(248, 248, 248)
   }
+
+  .loginCampo{
+    min-width: 200px;
+    padding: 10px;
+  }
+
+  .loginCampo p{
+    text-align: center;
+  }
