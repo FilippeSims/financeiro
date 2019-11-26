@@ -43,7 +43,18 @@ export default {
   methods: {
     logar () {
       window.axios.post('http://localhost:3000/api/sistema/v1/login', this.login)
-        .then(() => {
+        .then(res => {
+          if (res.data.token !== null) {
+            console.log('Existe token')
+          }
+          this.$q.notify({
+            color: res.data.color,
+            timeout: 1000,
+            textColor: 'white',
+            icon: res.data.icon,
+            message: res.data.msg,
+            position: 'top'
+          })
         })
     }
   }

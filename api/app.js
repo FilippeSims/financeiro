@@ -5,6 +5,8 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var bodyParser = require('body-parser')
 var cors = require('cors')
+var jsonwt = require('jsonwebtoken')
+var configJwt = require('./app/auth/config')
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
@@ -31,20 +33,32 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+function verificaJWT(req, res, next) {
+  var token = req.headers['x-access-token']
+  if (!token) return res.status(401).send({ status: false, msg: 'Você não tem um token válido!' })
+
+  jsonwt.verify(token, configJwt.secretOrKey, function(err, decoded){
+    if(err) return res.status(500).send({status: false, msg: 'Falha ao autenticar o token!' })
+
+    req.usuarion = decoded.n
+    next()
+  })
+}
+
 app.use('/', indexRouter)
 app.use('/users', usersRouter)
-app.use('/api/sistema/v1/registro', registroRotas)
+app.use('/api/sistema/v1/registro', verificaJWT, registroRotas)
 app.use('/api/sistema/v1/lanc', lancRotas)
 app.use('/api/sistema/v1/usuarios', registrarUsuarioRotas)
 app.use('/api/sistema/v1/login', loginUsuarioRotas)
 
 // catch 404 and forward to error handler
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
   next(createError(404));
 });
 
 // error handler
-app.use(function(err, req, res, next) {
+app.use(function (err, req, res, next) {
   // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
