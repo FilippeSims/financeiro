@@ -70,10 +70,7 @@
 </template>
 
 <script>
-window.axios = require('axios')
-window.axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded'
-window.axios.defaults.headers.put['Content-Type'] = 'application/x-www-form-urlencoded'
-
+let tokenUser = localStorage.getItem('token')
 export default {
   data () {
     return {
@@ -82,7 +79,8 @@ export default {
       toSave: {},
       inserirForm: false,
       editarForm: false,
-      updateStatus: false
+      updateStatus: false,
+      token: { tokenUser }
     }
   },
   methods: {
@@ -102,13 +100,13 @@ export default {
       this.editarForm = status
     },
     getList () {
-      window.axios.get('http://localhost:3000/api/sistema/v1/registro').then(res => {
+      window.axios.get('http://localhost:3000/api/sistema/v1/registro', { headers: { 'x-access-token': this.token.tokenUser } }).then(res => {
         this.registros = res.data
       })
     },
     remove (id) {
       if (confirm('Você tem certeza que deseja apagar?')) {
-        window.axios.delete('http://localhost:3000/api/sistema/v1/registro/' + id)
+        window.axios.delete('http://localhost:3000/api/sistema/v1/registro/' + id, { headers: { 'x-access-token': this.token.tokenUser } })
           .then(() => {
             this.getList()
             this.checkReg = []

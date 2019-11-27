@@ -38,7 +38,6 @@ exports.post = (req, res) =>{
     const valor = req.body.valorreg;
     const obs = req.body.obsreg;
     const desc = req.body.descreg;
-    console.log(data, valor, obs, desc)
     criarRegistro(data, valor, obs, desc, function(err, registro){
         if(err){
             res.sendStatus(500)
@@ -52,6 +51,7 @@ exports.post = (req, res) =>{
 /* DELETE */
 function deleteRegistro(id, callback){
     db.pool.query(`DELETE FROM reg WHERE nreg in (${id})`, function(err, res){
+        console.log(err)
         if(err){
             callback(err)
         } else{
@@ -65,6 +65,7 @@ exports.delete = (req, res) =>{
     const arrayId = id.split(/\s*,\s*/)
     deleteRegistro(arrayId, function(err){
         if(err){
+            console.log(err)
             res.sendStatus(500)
         } else{
             res.sendStatus(204)

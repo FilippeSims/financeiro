@@ -1,6 +1,17 @@
 <template>
-  <q-layout view="hHh Lpr fFf"> <!-- Be sure to play with the Layout demo on docs -->
+    <q-layout v-if="token.tokenUser === null">
+    <q-page-container>
+      <q-banner dense inline-actions class="text-white bg-red">
+      Você não tem autorização para acessar essa página, faça login!
+      <template v-slot:action>
+        <q-btn flat color="white" label="Fazer login" to="/" />
+      </template>
+    </q-banner>
+    <q-icon name="warning" class="text-red absolute-center" style="font-size: 12rem;"/>
+    </q-page-container>
+  </q-layout>
 
+  <q-layout view="hHh Lpr fFf" v-else> <!-- Be sure to play with the Layout demo on docs -->
     <!-- (Optional) The Header -->
     <q-header>
       <q-toolbar>
@@ -23,7 +34,7 @@
       bordered
       content-class="bg-grey-4"
     >
-        <q-scroll-area class="fit">
+        <q-scroll-area class="fit" style="height: calc(100% - 150px); margin-top: 150px; border-right: 1px solid #ddd">
           <q-list v-for="(menuItem, index) in menuList" :key="index">
             <q-item clickable :active="menuItem.label === ''" :to="menuItem.to" v-ripple>
               <q-item-section avatar>
@@ -36,6 +47,17 @@
            <q-separator v-if="menuItem.separator" />
           </q-list>
         </q-scroll-area>
+
+        <q-img class="absolute-top" src="https://cdn.quasar.dev/img/material.png" style="height: 150px">
+          <div class="absolute-bottom bg-transparent">
+            <q-avatar size="56px" class="q-mb-sm">
+              <img src="https://cdn.quasar.dev/img/boy-avatar.png">
+            </q-avatar>
+            <div class="text-weight-bold">{{ usuario[0].nomeusuario + ' ' + usuario[0].sobrenomeusuario}}</div>
+            <div>{{ usuario[0].emailusuario }}</div>
+            <div>{{ usuario[0].ruleusuario }}</div>
+          </div>
+        </q-img>
     </q-drawer>
 
     <q-page-container>
@@ -78,10 +100,16 @@ const menuList = [
   {
     icon: 'logout',
     label: 'Sair',
-    to: '/logout',
+    to: '/sistema/sair',
     separator: false
   }
 ]
+
+let tokenUser = localStorage.getItem('token')
+window.axios = require('axios')
+window.axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded'
+window.axios.defaults.headers.put['Content-Type'] = 'application/x-www-form-urlencoded'
+window.axios.defaults.headers.get['x-access-token'] = tokenUser
 
 export default {
   // name: 'LayoutName',
@@ -89,8 +117,21 @@ export default {
   data () {
     return {
       leftDrawer: true,
-      menuList
+      menuList,
+      token: { tokenUser },
+      usuario: { data: [] }
     }
+  },
+  methods: {
+    dadosUsuario () {
+      window.axios.get('http://localhost:3000/api/sistema/v1/usuario', { headers: { 'x-access-token': this.token.tokenUser } })
+        .then(res => {
+          this.usuario = res.data
+        })
+    }
+  },
+  mounted () {
+    this.dadosUsuario()
   }
 }
 </script>

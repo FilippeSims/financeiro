@@ -45,7 +45,8 @@ export default {
       window.axios.post('http://localhost:3000/api/sistema/v1/login', this.login)
         .then(res => {
           if (res.data.token !== null) {
-            console.log('Existe token')
+            localStorage.setItem('token', res.data.token)
+            window.location = '/sistema'
           }
           this.$q.notify({
             color: res.data.color,

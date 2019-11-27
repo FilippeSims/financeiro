@@ -4,7 +4,6 @@ let config = require('../auth/config')
 let jsonwt = require('jsonwebtoken')
 
 exports.get = (req, res) => {
-    console.log('oi')
 }
 
 /* POST */
@@ -49,7 +48,7 @@ exports.post = (req, res) => {
                         dadosUsuario(email, function (err, usuario) {
                             const { sign } = require('jsonwebtoken')
                             const dados = { ...usuario }
-                            var token = jsonwt.sign({ n: dados.nusuario }, config.secretOrKey, { expiresIn: 3600 })
+                            var token = jsonwt.sign({ n: dados[0].nusuario }, config.secretOrKey, { expiresIn: 3600 })
                             res.status(200).json({ status: true, color: 'green', icon: 'mood', msg: 'Login realizado com sucesso!', token: token })
                         })
                     }

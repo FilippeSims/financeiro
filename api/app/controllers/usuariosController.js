@@ -43,6 +43,16 @@ module.exports.emailVerifica = function verificaEmail(email, callback) {
     })
 }
 
+function verificaEmail2(email, callback) {
+    db.pool.query(`SELECT emailusuario FROM usuarios WHERE emailusuario = '${email}'`, function (err, res) {
+        if (err) {
+            callback(err, null)
+        } else {
+            callback(null, res.rowCount)
+        }
+    })
+}
+
 
 exports.post = (req, res) => {
     const nome = req.body.nome
@@ -55,7 +65,7 @@ exports.post = (req, res) => {
     const salt = bcrypt.genSaltSync(10)
     if (senha == senhaRepetida) {
         const senhaCrypt = bcrypt.hashSync(senha, salt)
-        verificaEmail(email, function (err, retorno) {
+        verificaEmail2(email, function (err, retorno) {
             if (retorno == 0) {
                 if (rule == null) {
                     const rule = 'guest'
