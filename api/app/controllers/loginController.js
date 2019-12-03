@@ -30,13 +30,15 @@ function dadosUsuario(email, callback) {
 exports.post = (req, res) => {
     const email = req.body.email
     const senha = req.body.senha
-    if (!email && !senha){
+    if (!email || !senha){
         res.status(200).json({ status: false, color: 'red', icon: 'error', msg: 'Digite um e-mail e uma senha!', token: null })
-    } if (!email) {
-        res.status(200).json({ status: false, color: 'red', icon: 'error', msg: 'Digite um e-mail!', token: null })
-    } if (!senha) {
-        res.status(200).json({ status: false, color: 'red', icon: 'error', msg: 'Digite uma senha!', token: null })
-    } if (email && senha) {
+    } 
+    // if (!email) {
+    //     res.status(200).json({ status: false, color: 'red', icon: 'error', msg: 'Digite um e-mail!', token: null })
+    // } if (!senha) {
+    //     res.status(200).json({ status: false, color: 'red', icon: 'error', msg: 'Digite uma senha!', token: null })
+    // } 
+    if (email && senha) {
         usuario.emailVerifica(email, function (err, retorno) {
             if (retorno == 0) {
                 res.status(200).json({ status: false, color: 'red', icon: 'error', msg: 'E-mail não encontrado!', token: null })

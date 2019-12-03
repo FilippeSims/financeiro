@@ -44,6 +44,7 @@ export default {
     logar () {
       window.axios.post('http://api.absolutier.com.br/api/sistema/v1/login', this.login)
         .then(res => {
+          console.log(res)
           if (res.data.token !== null) {
             localStorage.setItem('token', res.data.token)
             window.location = '/sistema'
