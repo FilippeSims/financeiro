@@ -136,18 +136,18 @@ export default {
       this.toSave = regPorNumero
     },
     getRegistro () {
-      window.axios.get('http://localhost:3000/api/sistema/v1/registro', { headers: { 'x-access-token': this.token.tokenUser } }).then(res => {
+      window.axios.get('http://api.absolutier.com.br/api/sistema/v1/registro', { headers: { 'x-access-token': this.token.tokenUser } }).then(res => {
         this.registros = res.data
       })
     },
     getList () {
-      window.axios.get('http://localhost:3000/api/sistema/v1/lanc', { headers: { 'x-access-token': this.token.tokenUser } }).then(res => {
+      window.axios.get('http://api.absolutier.com.br/api/sistema/v1/lanc', { headers: { 'x-access-token': this.token.tokenUser } }).then(res => {
         this.lancs = res.data
       })
     },
     remove (id) {
       if (confirm('Você tem certeza que deseja apagar?')) {
-        window.axios.delete('http://localhost:3000/api/sistema/v1/lanc/' + id, { headers: { 'x-access-token': this.token.tokenUser } })
+        window.axios.delete('http://api.absolutier.com.br/api/sistema/v1/lanc/' + id, { headers: { 'x-access-token': this.token.tokenUser } })
           .then(() => {
             this.getList()
             this.checkReg = []
@@ -155,7 +155,7 @@ export default {
       }
     },
     create () {
-      window.axios.post('http://localhost:3000/api/sistema/v1/lanc', this.toSave, { headers: { 'x-access-token': this.token.tokenUser } })
+      window.axios.post('http://api.absolutier.com.br/api/sistema/v1/lanc', this.toSave, { headers: { 'x-access-token': this.token.tokenUser } })
         .then(() => {
           this.toSave = {}
           this.inserirForm = false
@@ -172,7 +172,7 @@ export default {
         })
     },
     update () {
-      window.axios.put('http://localhost:3000/api/sistema/v1/lanc/' + this.toSave.nlanc, this.toSave, { headers: { 'x-access-token': this.token.tokenUser } })
+      window.axios.put('http://api.absolutier.com.br/api/sistema/v1/lanc/' + this.toSave.nlanc, this.toSave, { headers: { 'x-access-token': this.token.tokenUser } })
         .then(() => {
           this.updateStatus = false
           this.toSave = {}

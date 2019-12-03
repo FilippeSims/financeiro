@@ -37,7 +37,7 @@ export default {
   },
   methods: {
     create () {
-      window.axios.post('http://localhost:3000/api/sistema/v1/usuarios', this.toSave)
+      window.axios.post('http://api.absolutier.com.br/api/sistema/v1/usuarios', this.toSave)
         .then(res => {
           this.$q.notify({
             color: res.data.color,

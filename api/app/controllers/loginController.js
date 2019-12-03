@@ -30,7 +30,9 @@ function dadosUsuario(email, callback) {
 exports.post = (req, res) => {
     const email = req.body.email
     const senha = req.body.senha
-    if (!email) {
+    if (!email && !senha){
+        res.status(200).json({ status: false, color: 'red', icon: 'error', msg: 'Digite um e-mail e uma senha!', token: null })
+    } if (!email) {
         res.status(200).json({ status: false, color: 'red', icon: 'error', msg: 'Digite um e-mail!', token: null })
     } if (!senha) {
         res.status(200).json({ status: false, color: 'red', icon: 'error', msg: 'Digite uma senha!', token: null })

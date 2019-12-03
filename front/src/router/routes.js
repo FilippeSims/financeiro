@@ -15,6 +15,7 @@ const routes = [
       { path: '', component: () => import('pages/sistema/Dashboard.vue') },
       { path: '/sistema/registro', component: () => import('pages/sistema/Registro.vue') },
       { path: '/sistema/lanc', component: () => import('pages/sistema/Lanc.vue') },
+      { path: '/sistema/doc', component: () => import('pages/sistema/Doc.vue') },
       { path: '/sistema/sair', component: () => import('pages/sistema/Sair.vue') }
     ]
   }

@@ -36,7 +36,7 @@
     >
         <q-scroll-area class="fit" style="height: calc(100% - 150px); margin-top: 150px; border-right: 1px solid #ddd">
           <q-list v-for="(menuItem, index) in menuList" :key="index">
-            <q-item clickable :active="menuItem.label === ''" :to="menuItem.to" v-ripple>
+            <q-item clickable :active="menuItem.label === ''" :to="menuItem.to" v-if="usuario[0].ruleusuario === menuItem.rule" v-ripple>
               <q-item-section avatar>
                 <q-icon :name="menuItem.icon" :color="menuItem.color" />
               </q-item-section>
@@ -59,7 +59,6 @@
           </div>
         </q-img>
     </q-drawer>
-
     <q-page-container>
       <!-- This is where pages get injected -->
       <router-view />
@@ -83,25 +82,36 @@ const menuList = [
     icon: 'home',
     label: 'Início',
     to: '/sistema',
-    separator: true
+    separator: true,
+    rule: 'guest'
   },
   {
     icon: 'control_point',
     label: 'Registro',
     to: '/sistema/registro',
-    separator: false
+    separator: false,
+    rule: 'guest'
   },
   {
     icon: 'control_point',
     label: 'Lançamentos',
     to: '/sistema/lanc',
-    separator: true
+    separator: false,
+    rule: 'guest'
+  },
+  {
+    icon: 'control_point',
+    label: 'Doc',
+    to: '/sistema/doc',
+    separator: true,
+    rule: 'guest'
   },
   {
     icon: 'logout',
     label: 'Sair',
     to: '/sistema/sair',
-    separator: false
+    separator: false,
+    rule: 'guest'
   }
 ]
 
@@ -124,7 +134,7 @@ export default {
   },
   methods: {
     dadosUsuario () {
-      window.axios.get('http://localhost:3000/api/sistema/v1/usuario', { headers: { 'x-access-token': this.token.tokenUser } })
+      window.axios.get('http://api.absolutier.com.br/api/sistema/v1/usuario', { headers: { 'x-access-token': this.token.tokenUser } })
         .then(res => {
           this.usuario = res.data
         })

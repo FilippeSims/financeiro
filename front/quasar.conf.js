@@ -65,9 +65,9 @@ module.exports = function (ctx) {
     supportIE: false,
 
     // https://quasar.dev/quasar-cli/quasar-conf-js#Property%3A-build
-    build: {
+    build: { 
       scopeHoisting: true,
-         vueRouterMode: 'history',
+      vueRouterMode: 'history',
       // showProgress: false,
       // gzip: true,
       // analyze: true,

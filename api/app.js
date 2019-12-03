@@ -14,6 +14,7 @@ var usersRouter = require('./routes/users');
 var usuarioRotas = require('./app/rotas/usuarioRotas')
 var registroRotas = require('./app/rotas/registroRotas')
 var lancRotas = require('./app/rotas/lancRotas')
+var docRotas = require('./app/rotas/docRotas')
 var registrarUsuarioRotas = require('./app/rotas/registrarUsuarios')
 var loginUsuarioRotas = require('./app/rotas/loginRotas')
 
@@ -51,6 +52,7 @@ app.use('/users', usersRouter)
 app.use('/api/sistema/v1/usuario', verificaJWT, usuarioRotas)
 app.use('/api/sistema/v1/registro', verificaJWT, registroRotas)
 app.use('/api/sistema/v1/lanc', verificaJWT, lancRotas)
+app.use('/api/sistema/v1/doc', docRotas)
 app.use('/api/sistema/v1/usuarios', registrarUsuarioRotas)
 app.use('/api/sistema/v1/login', loginUsuarioRotas)
 

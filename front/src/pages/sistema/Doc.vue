@@ -2,7 +2,7 @@
   <q-page padding>
     <q-breadcrumbs>
       <q-breadcrumbs-el icon="home" to="/sistema" />
-      <q-breadcrumbs-el label="Registro" icon="widgets" to="/sistema/registro" />
+      <q-breadcrumbs-el label="Doc" icon="widgets" to="/sistema/doc" />
     </q-breadcrumbs>
     <div class="q-pa-md doc-container">
     <div id="tituloForm" v-if="inserirForm === true">
@@ -14,63 +14,55 @@
       <q-form @submit.prevent="save()" class="q-gutter-md" v-if="inserirForm === true || editarForm === true && checkReg.length < 2 && checkReg.length != 0">
         <q-input
           filled
-          type="number"
-          v-model="toSave.valorreg"
+          v-model="toSave.valordoc"
           label="Valor"
-          hint="Valor do registro"
+          hint="Valor do Doc"
           lazy-rules
           :rules="[ val => val && val.length > 0 || 'Por favor digite o valor']"
         />
+        <q-date v-model="toSave.dtdoc" minimal/>
         <q-input
           filled
-          v-model="toSave.obsreg"
-          label="Observação"
-          hint="Observação do registro"
+          v-model="toSave.fornecedordoc"
+          label="Fornecedor"
+          hint="Fornecedor do Doc"
           hide-underline="true"
           type="textarea"
-          rows="3"
+          rows="1"
         />
-        <q-input
-          filled
-          v-model="toSave.descreg"
-          label="Descrição"
-          hint="Descrição do registro"
-          hide-underline="true"
-          type="textarea"
-          rows="3"
-        />
+        <q-select filled v-model="toSave.tpcontroledoc" label="Tipo de Controle" hint="Tipo de Controle do Doc" :options="optionsTipoControle"/>
         <div>
           <q-btn type="submit" color="green" icon="send" class="q-mb-sm float-left"  unelevated/>
         </div>
       </q-form>
-      <q-btn class="q-mb-sm float-right" color="green" icon="add_circle" v-on:click="inserirShow(true)" v-if="inserirForm === false" unelevated/>
+        <q-btn class="q-mb-sm float-right" color="green" icon="add_circle" v-on:click="inserirShow(true)" v-if="inserirForm === false" unelevated/>
       <q-btn class="q-mr-sm float-right" color="red" icon="remove_circle" v-on:click="inserirShow(false), editarShow(false)" v-if="inserirForm === true || editarForm === true && checkReg.length != 0" unelevated/>
       <q-btn class="q-mr-sm float-right" color="red" icon="delete_forever" v-on:click="remove(checkReg)" v-if="inserirForm === false && checkReg.length > 0" unelevated/>
       <q-btn class="q-mr-sm float-right" color="primary" icon="edit" @click.prevent="toUpdate(checkReg[0])" v-on:click="editarShow(true)" v-if="inserirForm === false && checkReg.length > 0 && checkReg.length < 2" unelevated/>
-      <table>
+          <table>
         <thead>
           <tr>
             <th scope="col">Ação</th>
-            <th scope="col">Número Registro</th>
-            <th scope="col">Data Registro</th>
-            <th scope="col">Valor Registro</th>
-            <th scope="col">Observação Registro</th>
-            <th scope="col">Descrição Registro</th>
+            <th scope="col">Número Doc</th>
+            <th scope="col">Valor Doc</th>
+            <th scope="col">Data Doc</th>
+            <th scope="col">Fornecedor Doc</th>
+            <th scope="col">Tipo de Controle</th>
           </tr>
         </thead>
         <tbody>
-          <tr v-for="(registro, keyRegistro) in registros" :key="keyRegistro">
-            <td data-label="Ação Reg"> <q-checkbox  v-bind:val="registro.nreg" v-model="checkReg"/> </td>
-            <td data-label="Número Reg" v-if="registro.nreg === null"><q-badge class="q-ml-sm" color="red">NULL</q-badge></td>
-            <td data-label="Número Reg" v-else> {{ registro.nreg }} </td>
-            <td data-label="Data Reg" v-if="registro.dtreg === null"><q-badge class="q-ml-sm" color="red">NULL</q-badge></td>
-            <td data-label="Data Reg" v-else> {{ registro.dtreg | formatDate }} </td>
-            <td data-label="Valor Reg" v-if="registro.valorreg === null"><q-badge class="q-ml-sm" color="red">NULL</q-badge></td>
-            <td data-label="Valor Reg" v-else> {{ registro.valorreg }} </td>
-            <td data-label="Observação Reg" v-if="registro.obsreg === null"><q-badge class="q-ml-sm" color="red">NULL</q-badge></td>
-            <td data-label="Observação Reg" v-else> {{ registro.obsreg }} </td>
-            <td data-label="Descrição Reg" v-if="registro.descreg === null"><q-badge class="q-ml-sm" color="red">NULL</q-badge></td>
-            <td data-label="Descrição Reg" v-else> {{ registro.descreg }} </td>
+          <tr v-for="(doc, keyRegistro) in docs" :key="keyRegistro">
+            <td data-label="Ação Reg"> <q-checkbox  v-bind:val="doc.ndoc" v-model="checkReg"/> </td>
+            <td data-label="Número Reg" v-if="doc.ndoc === null"><q-badge class="q-ml-sm" color="red">NULL</q-badge></td>
+            <td data-label="Número Reg" v-else> {{ doc.ndoc }} </td>
+            <td data-label="Valor Reg" v-if="doc.valordoc === null"><q-badge class="q-ml-sm" color="red">NULL</q-badge></td>
+            <td data-label="Valor Reg" v-else> {{ doc.valordoc }} </td>
+            <td data-label="Data Reg" v-if="doc.dtdoc === null"><q-badge class="q-ml-sm" color="red">NULL</q-badge></td>
+            <td data-label="Data Reg" v-else> {{ doc.dtdoc | formatDate }} </td>
+            <td data-label="Observação Reg" v-if="doc.fornecedordoc === null"><q-badge class="q-ml-sm" color="red">NULL</q-badge></td>
+            <td data-label="Observação Reg" v-else> {{ doc.fornecedordoc }} </td>
+            <td data-label="Descrição Reg" v-if="doc.tpcontroledoc === null"><q-badge class="q-ml-sm" color="red">NULL</q-badge></td>
+            <td data-label="Descrição Reg" v-else> {{ doc.tpcontroledoc }} </td>
           </tr>
         </tbody>
       </table>
@@ -79,17 +71,17 @@
 </template>
 
 <script>
-let tokenUser = localStorage.getItem('token')
 export default {
   data () {
     return {
-      registros: { data: [] },
       checkReg: [ ],
       toSave: {},
+      docs: { data: [] },
       inserirForm: false,
       editarForm: false,
-      updateStatus: false,
-      token: { tokenUser }
+      optionsTipoControle: [
+        'Patrimônio', 'Consumo', 'Rateio'
+      ]
     }
   },
   methods: {
@@ -109,13 +101,13 @@ export default {
       this.editarForm = status
     },
     getList () {
-      window.axios.get('http://api.absolutier.com.br/api/sistema/v1/registro', { headers: { 'x-access-token': this.token.tokenUser } }).then(res => {
-        this.registros = res.data
+      window.axios.get('http://api.absolutier.com.br/api/sistema/v1/doc').then(res => {
+        this.docs = res.data
       })
     },
     remove (id) {
       if (confirm('Você tem certeza que deseja apagar?')) {
-        window.axios.delete('http://api.absolutier.com.br/api/sistema/v1/registro/' + id, { headers: { 'x-access-token': this.token.tokenUser } })
+        window.axios.delete('http://api.absolutier.com.br/api/sistema/v1/doc/' + id)
           .then(() => {
             this.getList()
             this.checkReg = []
@@ -123,7 +115,7 @@ export default {
       }
     },
     create () {
-      window.axios.post('http://api.absolutier.com.br/api/sistema/v1/registro', this.toSave, { headers: { 'x-access-token': this.token.tokenUser } })
+      window.axios.post('http://api.absolutier.com.br/api/sistema/v1/doc', this.toSave)
         .then(() => {
           this.toSave = {}
           this.inserirForm = false
@@ -140,7 +132,7 @@ export default {
         })
     },
     update () {
-      window.axios.put('http://api.absolutier.com.br/api/sistema/v1/registro/' + this.toSave.nreg, this.toSave, { headers: { 'x-access-token': this.token.tokenUser } })
+      window.axios.put('http://api.absolutier.com.br/api/sistema/v1/doc/' + this.toSave.ndoc, this.toSave)
         .then(() => {
           this.updateStatus = false
           this.toSave = {}
@@ -159,8 +151,8 @@ export default {
     },
     toUpdate (id) {
       this.updateStatus = id
-      const campos = this.registros
-      const campoId = campos.find(obj => obj.nreg === id)
+      const campos = this.docs
+      const campoId = campos.find(obj => obj.ndoc === id)
       this.toSave = campoId
     }
   },

@@ -42,7 +42,7 @@ export default {
   },
   methods: {
     logar () {
-      window.axios.post('http://localhost:3000/api/sistema/v1/login', this.login)
+      window.axios.post('http://api.absolutier.com.br/api/sistema/v1/login', this.login)
         .then(res => {
           if (res.data.token !== null) {
             localStorage.setItem('token', res.data.token)
