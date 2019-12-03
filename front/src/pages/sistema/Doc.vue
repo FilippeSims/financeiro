@@ -101,13 +101,13 @@ export default {
       this.editarForm = status
     },
     getList () {
-      window.axios.get('http://api.absolutier.com.br/api/sistema/v1/doc').then(res => {
+      window.axios.get(`${process.env.API}/doc`).then(res => {
         this.docs = res.data
       })
     },
     remove (id) {
       if (confirm('Você tem certeza que deseja apagar?')) {
-        window.axios.delete('http://api.absolutier.com.br/api/sistema/v1/doc/' + id)
+        window.axios.delete(`${process.env.API}/doc/` + id)
           .then(() => {
             this.getList()
             this.checkReg = []
@@ -115,7 +115,7 @@ export default {
       }
     },
     create () {
-      window.axios.post('http://api.absolutier.com.br/api/sistema/v1/doc', this.toSave)
+      window.axios.post(`${process.env.API}/doc`, this.toSave)
         .then(() => {
           this.toSave = {}
           this.inserirForm = false
@@ -132,7 +132,7 @@ export default {
         })
     },
     update () {
-      window.axios.put('http://api.absolutier.com.br/api/sistema/v1/doc/' + this.toSave.ndoc, this.toSave)
+      window.axios.put(`${process.env.API}/doc/` + this.toSave.ndoc, this.toSave)
         .then(() => {
           this.updateStatus = false
           this.toSave = {}

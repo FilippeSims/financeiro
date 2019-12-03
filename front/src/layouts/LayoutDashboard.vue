@@ -36,7 +36,7 @@
     >
         <q-scroll-area class="fit" style="height: calc(100% - 150px); margin-top: 150px; border-right: 1px solid #ddd">
           <q-list v-for="(menuItem, index) in menuList" :key="index">
-            <q-item clickable :active="menuItem.label === ''" :to="menuItem.to" v-if="usuario[0].ruleusuario === menuItem.rule" v-ripple>
+            <q-item clickable :active="menuItem.label === ''" :to="menuItem.to" v-ripple>
               <q-item-section avatar>
                 <q-icon :name="menuItem.icon" :color="menuItem.color" />
               </q-item-section>
@@ -48,14 +48,14 @@
           </q-list>
         </q-scroll-area>
 
-        <q-img class="absolute-top" src="https://cdn.quasar.dev/img/material.png" style="height: 150px">
+        <q-img class="absolute-top" src="https://cdn.quasar.dev/img/material.png" style="height: 150px" v-for="(user, dados) in usuario" :key="dados">
           <div class="absolute-bottom bg-transparent">
             <q-avatar size="56px" class="q-mb-sm">
               <img src="https://cdn.quasar.dev/img/boy-avatar.png">
             </q-avatar>
-            <div class="text-weight-bold">{{ usuario[0].nomeusuario + ' ' + usuario[0].sobrenomeusuario}}</div>
-            <div>{{ usuario[0].emailusuario }}</div>
-            <div>{{ usuario[0].ruleusuario }}</div>
+            <div class="text-weight-bold">{{ user.nomeusuario + ' ' + user.sobrenomeusuario}}</div>
+            <div>{{ user.emailusuario }}</div>
+            <div>{{ user.ruleusuario }}</div>
           </div>
         </q-img>
     </q-drawer>
@@ -103,6 +103,13 @@ const menuList = [
     icon: 'control_point',
     label: 'Doc',
     to: '/sistema/doc',
+    separator: false,
+    rule: 'guest'
+  },
+  {
+    icon: 'control_point',
+    label: 'Pagar',
+    to: '/sistema/pagar',
     separator: true,
     rule: 'guest'
   },
@@ -134,7 +141,7 @@ export default {
   },
   methods: {
     dadosUsuario () {
-      window.axios.get('http://api.absolutier.com.br/api/sistema/v1/usuario', { headers: { 'x-access-token': this.token.tokenUser } })
+      window.axios.get(`${process.env.API}/usuario`, { headers: { 'x-access-token': this.token.tokenUser } })
         .then(res => {
           this.usuario = res.data
         })

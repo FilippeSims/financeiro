@@ -7,15 +7,15 @@
 export default {
   methods: {
     sair () {
-      localStorage.removeItem('token')
       this.$q.notify({
-        color: 'green',
+        color: 'red',
         timeout: 1000,
         textColor: 'white',
         icon: 'tag_faces',
-        message: 'Registro editado com sucesso!',
+        message: 'Você saiu do sistema!',
         position: 'top'
       })
+      localStorage.removeItem('token')
       window.location = '/'
     }
   },

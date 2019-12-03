@@ -31,7 +31,7 @@ exports.post = (req, res) => {
     const email = req.body.email
     const senha = req.body.senha
     if (!email || !senha){
-        res.status(200).json({ status: false, color: 'red', icon: 'error', msg: 'Digite um e-mail e uma senha!', token: null })
+        res.status(200).json({ status: false, color: 'red', icon: 'error', msg: 'Digita os dados solicitados!', token: null })
     } 
     // if (!email) {
     //     res.status(200).json({ status: false, color: 'red', icon: 'error', msg: 'Digite um e-mail!', token: null })

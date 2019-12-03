@@ -42,7 +42,7 @@ export default {
   },
   methods: {
     logar () {
-      window.axios.post('http://api.absolutier.com.br/api/sistema/v1/login', this.login)
+      window.axios.post(`${process.env.API}/login`, this.login)
         .then(res => {
           console.log(res)
           if (res.data.token !== null) {

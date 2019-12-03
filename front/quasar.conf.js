@@ -66,6 +66,13 @@ module.exports = function (ctx) {
 
     // https://quasar.dev/quasar-cli/quasar-conf-js#Property%3A-build
     build: { 
+      env: ctx.dev
+      ? {
+        API: JSON.stringify('http://localhost:3000/api/sistema/v1')
+      }
+      : {
+        API: JSON.stringify('http://api.absolutier.com.br/api/sistema/v1')
+      },
       scopeHoisting: true,
       vueRouterMode: 'history',
       // showProgress: false,
