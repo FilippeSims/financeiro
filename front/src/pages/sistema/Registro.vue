@@ -4,17 +4,19 @@
       <q-breadcrumbs-el icon="home" to="/sistema" />
       <q-breadcrumbs-el label="Registro" icon="widgets" to="/sistema/registro" />
     </q-breadcrumbs>
-    <div class="q-pa-md doc-container">
     <div id="tituloForm" v-if="inserirForm === true">
       <b>Inserir registro</b>
     </div>
     <div id="tituloForm" v-if="editarForm === true && checkReg.length < 2 && checkReg.length != 0" >
       <b>Editar registro</b>
     </div>
-      <q-form @submit.prevent="save()" class="q-gutter-md" v-if="inserirForm === true || editarForm === true && checkReg.length < 2 && checkReg.length != 0">
+      <q-form @submit.prevent="save()" class="q-gutter-md q-mt-sm" v-if="inserirForm === true || editarForm === true && checkReg.length < 2 && checkReg.length != 0">
         <q-input
           filled
-          type="number"
+          dense
+          prefix="R$"
+          mask="#.##"
+          reverse-fill-mask
           v-model="toSave.valorreg"
           label="Valor"
           hint="Valor do registro"
@@ -23,6 +25,7 @@
         />
         <q-input
           filled
+          dense
           v-model="toSave.obsreg"
           label="Observação"
           hint="Observação do registro"
@@ -32,6 +35,7 @@
         />
         <q-input
           filled
+          dense
           v-model="toSave.descreg"
           label="Descrição"
           hint="Descrição do registro"
@@ -66,7 +70,7 @@
             <td data-label="Data Reg" v-if="registro.dtreg === null"><q-badge class="q-ml-sm" color="red">NULL</q-badge></td>
             <td data-label="Data Reg" v-else> {{ registro.dtreg | formatDate }} </td>
             <td data-label="Valor Reg" v-if="registro.valorreg === null"><q-badge class="q-ml-sm" color="red">NULL</q-badge></td>
-            <td data-label="Valor Reg" v-else> {{ registro.valorreg }} </td>
+            <td data-label="Valor Reg" v-else> {{ 'R$ ' + formatPrice(registro.valorreg) }} </td>
             <td data-label="Observação Reg" v-if="registro.obsreg === null"><q-badge class="q-ml-sm" color="red">NULL</q-badge></td>
             <td data-label="Observação Reg" v-else> {{ registro.obsreg }} </td>
             <td data-label="Descrição Reg" v-if="registro.descreg === null"><q-badge class="q-ml-sm" color="red">NULL</q-badge></td>
@@ -74,7 +78,6 @@
           </tr>
         </tbody>
       </table>
-    </div>
   </q-page>
 </template>
 
@@ -108,6 +111,10 @@ export default {
     editarShow (status) {
       this.editarForm = status
     },
+    formatPrice (value) {
+      let val = (value / 1).toFixed(2).replace('.', ',')
+      return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')
+    },
     getList () {
       window.axios.get(`${process.env.API}/registro`, { headers: { 'x-access-token': this.token.tokenUser } }).then(res => {
         this.registros = res.data
@@ -116,9 +123,17 @@ export default {
     remove (id) {
       if (confirm('Você tem certeza que deseja apagar?')) {
         window.axios.delete(`${process.env.API}/registro/` + id, { headers: { 'x-access-token': this.token.tokenUser } })
-          .then(() => {
+          .then(res => {
             this.getList()
             this.checkReg = []
+            this.$q.notify({
+              color: res.data.color,
+              timeout: 10000,
+              textColor: 'white',
+              icon: res.data.icon,
+              message: res.data.msg,
+              position: 'top'
+            })
           })
       }
     },

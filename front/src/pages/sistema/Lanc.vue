@@ -4,7 +4,6 @@
       <q-breadcrumbs-el icon="home" to="/sistema" />
       <q-breadcrumbs-el label="Lançamentos" icon="widgets" to="/sistema/lanc" />
     </q-breadcrumbs>
-    <div class="q-pa-md doc-container">
     <div id="formLanc" v-if="inserirForm === true || editarForm === true && checkReg.length < 2 && checkReg.length != 0">
     <div id="tituloForm" v-if="inserirForm === true">
       <b>Inserir registro</b>
@@ -15,8 +14,26 @@
       <q-toggle v-model="toggleFormReg" checked-icon="check" unchecked-icon="clear" color="green" label="Existe registro?" keep-color/>
       <div id="registroLanc" v-if="toggleFormReg === true">
         <q-form @submit.prevent="save()" class="q-gutter-md">
-          <br>
-          <li class="listReg" v-for="(registro, keyRegistro) in registros" :key="keyRegistro" @click.prevent="registron(registro.nreg)">
+          <div class="paginacao q-mb-sm">
+            <q-btn
+              :disabled="pageNumber === 0"
+              v-on:click="pageNumber -= 1"
+              icon="navigate_before"
+              color="primary"
+              unelevated
+              dense
+            />
+            <q-btn
+              :disabled="pageNumber >= pageCount -1"
+              v-on:click="pageNumber += 1"
+              class="q-ml-sm"
+              icon="navigate_next"
+              color="primary"
+              unelevated
+              dense
+            />
+          </div>
+          <li class="listReg" v-for="(registro, keyRegistro) in paginatedData" :key="keyRegistro" @click.prevent="registron(registro.nreg)">
             <q-btn round size="8px" color="positive" icon="check" outline unelevated/>
             <q-badge class="q-ml-sm" color="light-blue-4">
              Número: {{ registro.nreg }}
@@ -28,12 +45,12 @@
               Valor: {{ registro.valorreg }}
             </q-badge>
           </li>
-          <q-input filled label="Número Registro" hint="Número do registro" v-model="toSave.nreg" disable/>
-          <q-input filled label="Valor" hint="Valor do lançamento" v-model="toSave.valorreg" />
-          <q-input filled v-model="toSave.dtreg" label="Data" hint="Data do lançamento" />
-          <q-input filled v-model="toSave.objlanc" label="Objeto" hint="Objeto do lançamento" />
-          <q-input filled v-model="toSave.partelanc" label="Parte" hint="Parte do lançamento" />
-          <q-input filled v-model="toSave.centrocontalanc" label="Centro Contábil" hint="Centro Contábil lançamento" />
+          <q-input dense filled label="Número Registro" hint="Número do registro" v-model="toSave.nreg" disable/>
+          <q-input dense filled prefix="R$" mask="#.##" reverse-fill-mask label="Valor" hint="Valor do lançamento" v-model="toSave.valorreg" />
+          <q-input dense filled v-model="toSave.dtreg" label="Data" hint="Data do lançamento" />
+          <q-input dense filled v-model="toSave.objlanc" label="Objeto" hint="Objeto do lançamento" />
+          <q-input dense filled v-model="toSave.partelanc" label="Parte" hint="Parte do lançamento" />
+          <q-input dense filled v-model="toSave.centrocontalanc" label="Centro Contábil" hint="Centro Contábil lançamento" />
           <div>
             <q-btn type="submit" color="green" icon="send" class="q-mb-sm float-left" unelevated />
           </div>
@@ -41,13 +58,13 @@
       </div>
       <div id="semRegistroLanc" v-else>
         <q-form @submit.prevent="save()" class="q-gutter-md">
-          <q-input filled v-model="toSave.regn" label="Número Registro" hint="Número do Registro" v-if="editarForm === true" />
-          <q-input filled v-model="toSave.vlrlanc" label="Valor" hint="Valor do lançamento" />
+          <q-input dense filled v-model="toSave.regn" label="Número Registro" hint="Número do Registro" v-if="editarForm === true" />
+          <q-input dense filled prefix="R$" mask="#.##" reverse-fill-mask v-model="toSave.vlrlanc" label="Valor" hint="Valor do lançamento" />
           <!-- <q-input filled v-model="toSave.dtlanc" label="Data" hint="Data do lançamento" /> -->
           <q-date v-model="toSave.dtlanc" minimal/>
-          <q-input filled v-model="toSave.objlanc" label="Objeto" hint="Objeto do lançamento" />
-          <q-input filled v-model="toSave.partelanc" label="Parte" hint="Parte do lançamento" />
-          <q-input filled v-model="toSave.centrocontalanc" label="Centro Contábil" hint="Centro Contábil lançamento" />
+          <q-input dense filled v-model="toSave.objlanc" label="Objeto" hint="Objeto do lançamento" />
+          <q-input dense filled v-model="toSave.partelanc" label="Parte" hint="Parte do lançamento" />
+          <q-input dense filled v-model="toSave.centrocontalanc" label="Centro Contábil" hint="Centro Contábil lançamento" />
         <div>
           <q-btn type="submit" color="green" icon="send" class="q-mb-sm float-left" unelevated />
         </div>
@@ -81,7 +98,7 @@
             <td data-label="Número Reg" v-if="lanc.nlanc === null"><q-badge class="q-ml-sm" color="red">NULL</q-badge></td>
             <td data-label="Número Lanc" v-else>{{ lanc.nlanc }}</td>
             <td data-label="Número Reg" v-if="lanc.vlrlanc === null"><q-badge class="q-ml-sm" color="red">NULL</q-badge></td>
-            <td data-label="Valor Lanc" v-else>{{ lanc.vlrlanc }}</td>
+            <td data-label="Valor Lanc" v-else> {{ 'R$ ' + formatPrice(lanc.vlrlanc) }} </td>
             <td data-label="Número Reg" v-if="lanc.dtlanc === null"><q-badge class="q-ml-sm" color="red">NULL</q-badge></td>
             <td data-label="Data Lanc" v-else>{{ lanc.dtlanc | formatDate }}</td>
             <td data-label="Número Reg" v-if="lanc.objlanc === null"><q-badge class="q-ml-sm" color="red">NULL</q-badge></td>
@@ -93,7 +110,6 @@
           </tr>
         </tbody>
       </table>
-    </div>
   </q-page>
 </template>
 <script>
@@ -107,11 +123,23 @@ export default {
       registros: { data: [] },
       lancs: { data: [] },
       toSave: {},
-      testes: {},
       inserirForm: false,
       editarForm: false,
       updateStatus: false,
+      pageNumber: 0,
+      pagination: {
+        descending: false,
+        page: 2,
+        rowsPerPage: 5
+      },
       token: { tokenUser }
+    }
+  },
+  props: {
+    size: {
+      type: Number,
+      required: false,
+      default: 3
     }
   },
   methods: {
@@ -130,6 +158,10 @@ export default {
     editarShow (status) {
       this.editarForm = status
     },
+    formatPrice (value) {
+      let val = (value / 1).toFixed(2).replace('.', ',')
+      return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')
+    },
     registron (n) {
       const reg = this.registros
       const regPorNumero = reg.find(obj => obj.nreg === n)
@@ -140,6 +172,14 @@ export default {
         this.registros = res.data
       })
     },
+    nextReg () {
+      this.pageNumber++
+      console.log('next')
+    },
+    prevPage () {
+      this.pageNumber--
+      console.log('prev')
+    },
     getList () {
       window.axios.get(`${process.env.API}/lanc`, { headers: { 'x-access-token': this.token.tokenUser } }).then(res => {
         this.lancs = res.data
@@ -148,9 +188,17 @@ export default {
     remove (id) {
       if (confirm('Você tem certeza que deseja apagar?')) {
         window.axios.delete(`${process.env.API}/lanc/` + id, { headers: { 'x-access-token': this.token.tokenUser } })
-          .then(() => {
+          .then(res => {
             this.getList()
             this.checkReg = []
+            this.$q.notify({
+              color: res.data.color,
+              timeout: 10000,
+              textColor: 'white',
+              icon: res.data.icon,
+              message: res.data.msg,
+              position: 'top'
+            })
           })
       }
     },
@@ -195,6 +243,19 @@ export default {
       const campos = this.lancs
       const campoId = campos.find(obj => obj.nlanc === id)
       this.toSave = campoId
+    }
+  },
+  computed: {
+    pageCount () {
+      let l = this.registros.length
+      let s = this.size
+      return Math.ceil(l / s)
+    },
+    paginatedData () {
+      const start = this.pageNumber * this.size,
+        end = start + this.size
+      return this.registros
+        .slice(start, end)
     }
   },
   mounted () {

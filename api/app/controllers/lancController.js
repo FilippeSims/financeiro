@@ -1,4 +1,5 @@
 var db = require('../pg/config')
+var error = require('../erros')
 
 /* GET  */
 function todosLanc(callback){
@@ -90,7 +91,13 @@ exports.delete = (req, res) =>{
     const arrayId = id.split(/\s*,\s*/)
     deleteLanc(arrayId, function(err){
         if(err){
-            res.sendStatus(500)
+            error.errorF(err.code, function(err, codeErro){
+                if(codeErro = '23503'){
+                    res.status(200).json(error.codeMensagem[0])
+                } else {
+                    res.sendStatus(500)
+                }
+            })
         } else{
             res.sendStatus(204)
         }

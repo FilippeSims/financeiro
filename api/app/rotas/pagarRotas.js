@@ -1,6 +1,6 @@
 var express = require('express');
 var router = express.Router();
-const controller = require('../controllers/lancController.js')
+const controller = require('../controllers/pagarController.js')
 
 router.get('/', controller.get)
 router.post('/', controller.post)

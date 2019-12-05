@@ -1,4 +1,5 @@
 var db = require('../pg/config')
+var error = require('../erros')
 
 /* GET  */
 function todosRegistros(callback){
@@ -51,7 +52,6 @@ exports.post = (req, res) =>{
 /* DELETE */
 function deleteRegistro(id, callback){
     db.pool.query(`DELETE FROM reg WHERE nreg in (${id})`, function(err, res){
-        console.log(err)
         if(err){
             callback(err)
         } else{
@@ -65,8 +65,13 @@ exports.delete = (req, res) =>{
     const arrayId = id.split(/\s*,\s*/)
     deleteRegistro(arrayId, function(err){
         if(err){
-            console.log(err)
-            res.sendStatus(500)
+            error.errorF(err.code, function(err, codeErro){
+                if(codeErro = '23503'){
+                    res.status(200).json(error.codeMensagem[0])
+                } else {
+                    res.sendStatus(500)
+                }
+            })
         } else{
             res.sendStatus(204)
         }

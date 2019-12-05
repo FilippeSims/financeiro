@@ -4,7 +4,6 @@
       <q-breadcrumbs-el icon="home" to="/sistema" />
       <q-breadcrumbs-el label="Doc" icon="widgets" to="/sistema/doc" />
     </q-breadcrumbs>
-    <div class="q-pa-md doc-container">
     <div id="tituloForm" v-if="inserirForm === true">
       <b>Inserir registro</b>
     </div>
@@ -14,6 +13,10 @@
       <q-form @submit.prevent="save()" class="q-gutter-md" v-if="inserirForm === true || editarForm === true && checkReg.length < 2 && checkReg.length != 0">
         <q-input
           filled
+          dense
+          prefix="R$"
+          mask="#.##"
+          reverse-fill-mask
           v-model="toSave.valordoc"
           label="Valor"
           hint="Valor do Doc"
@@ -23,6 +26,7 @@
         <q-date v-model="toSave.dtdoc" minimal/>
         <q-input
           filled
+          dense
           v-model="toSave.fornecedordoc"
           label="Fornecedor"
           hint="Fornecedor do Doc"
@@ -30,7 +34,7 @@
           type="textarea"
           rows="1"
         />
-        <q-select filled v-model="toSave.tpcontroledoc" label="Tipo de Controle" hint="Tipo de Controle do Doc" :options="optionsTipoControle"/>
+        <q-select dense filled v-model="toSave.tpcontroledoc" label="Tipo de Controle" hint="Tipo de Controle do Doc" :options="optionsTipoControle"/>
         <div>
           <q-btn type="submit" color="green" icon="send" class="q-mb-sm float-left"  unelevated/>
         </div>
@@ -56,7 +60,7 @@
             <td data-label="Número Reg" v-if="doc.ndoc === null"><q-badge class="q-ml-sm" color="red">NULL</q-badge></td>
             <td data-label="Número Reg" v-else> {{ doc.ndoc }} </td>
             <td data-label="Valor Reg" v-if="doc.valordoc === null"><q-badge class="q-ml-sm" color="red">NULL</q-badge></td>
-            <td data-label="Valor Reg" v-else> {{ doc.valordoc }} </td>
+            <td data-label="Valor Reg" v-else> {{ 'R$ ' + formatPrice(doc.valordoc) }} </td>
             <td data-label="Data Reg" v-if="doc.dtdoc === null"><q-badge class="q-ml-sm" color="red">NULL</q-badge></td>
             <td data-label="Data Reg" v-else> {{ doc.dtdoc | formatDate }} </td>
             <td data-label="Observação Reg" v-if="doc.fornecedordoc === null"><q-badge class="q-ml-sm" color="red">NULL</q-badge></td>
@@ -66,7 +70,6 @@
           </tr>
         </tbody>
       </table>
-    </div>
   </q-page>
 </template>
 
@@ -99,6 +102,10 @@ export default {
     },
     editarShow (status) {
       this.editarForm = status
+    },
+    formatPrice (value) {
+      let val = (value / 1).toFixed(2).replace('.', ',')
+      return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')
     },
     getList () {
       window.axios.get(`${process.env.API}/doc`).then(res => {
