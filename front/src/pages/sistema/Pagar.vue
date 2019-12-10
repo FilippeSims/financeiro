@@ -88,7 +88,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="(paga, keyPagar) in pagar" :key="keyPagar">
+          <tr v-for="(paga, keyPagar) in listPagar" :key="keyPagar">
             <td data-label="Ação">
               <q-checkbox v-bind:val="paga.n_pagar" v-model="checkReg" />
             </td>
@@ -114,6 +114,7 @@
 
 <script>
 let tokenUser = localStorage.getItem('token')
+import _ from 'lodash'
 export default {
   data () {
     return {
@@ -248,6 +249,9 @@ export default {
         end = start + this.size
       return this.lancs
         .slice(start, end)
+    },
+    listPagar () {
+      return _.orderBy(this.pagar, 'n_pagar')
     }
   },
   mounted () {

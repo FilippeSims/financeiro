@@ -4,6 +4,30 @@
       <q-breadcrumbs-el icon="home" to="/sistema" />
       <q-breadcrumbs-el label="Lançamentos" icon="widgets" to="/sistema/lanc" />
     </q-breadcrumbs>
+    {{ checkReg }}
+    {{ toSave }}
+    <div id="pagar" v-if="pagarStatus === true">
+      <div id="tituloForm" class="q-mt-sm" v-if="pagarStatus === true">
+        <b>Pagar</b>
+      </div>
+      <q-form @submit.prevent="pagar()" class="q-gutter-md q-mt-sm">
+        <q-input dense filled label="Número lançamento" v-model="toSave.nlanc"/>
+        <q-input dense filled prefix="R$" mask="#.##" reverse-fill-mask label="Valor" hint="Valor do lançamento" v-model="toSave.vlrlanc" />
+        <q-input filled dense label="Observação" hint="Observação do registro" hide-underline="true" type="textarea" rows="2" v-model="toSave.obspagar"/>
+        <q-select dense filled label="Forma de pagamento" hint="Forma de Pagamento" :options="optionsFormaP" v-model="toSave.formaP"/>
+        <q-input dense filled label="Parcelas" hint="Número de Parcelas" lazy-rules :rules="[ val => val && val.length > 0 || 'Por favor digite um número de parcelas!', val => val !== '0' || 'O número de parcelas não pode ser 0!']" v-model="toSave.nparcelas"/>
+        <div class="previa" v-if="previaView === true">
+          <li class="listReg" v-for="e in parseInt(toSave.nparcelas)" :key="e">
+            {{ e + 'x: ' + formatPrice(toSave.vlrlanc / toSave.nparcelas) + ' | ' + dataHoje(toSave.formaP.vencimento, e) }}
+          </li>
+          <q-toggle v-model="previewConfere" checked-icon="check" unchecked-icon="clear" color="green" label="Você conferiu os dados?" keep-color/>
+          <br>
+          <q-btn type="submit" color="green" icon="send" class="q-mt-sm float-left" unelevated dense disabled v-if="previewConfere === false"/>
+          <q-btn type="submit" color="green" icon="send" class="q-mt-sm float-left" unelevated dense v-if="previewConfere === true" />
+        </div>
+        <q-btn type="submit" color="green" v-on:click="previaView = true" icon="visibility" class="q-mt-sm float-left" unelevated dense v-if="previaView === false"/>
+      </q-form>
+    </div>
     <div id="formLanc" v-if="inserirForm === true || editarForm === true && checkReg.length < 2 && checkReg.length != 0">
     <div id="tituloForm" v-if="inserirForm === true">
       <b>Inserir registro</b>
@@ -71,10 +95,12 @@
         </q-form>
       </div>
       </div>
-      <q-btn class="q-mb-sm float-right" color="green" icon="add_circle" v-on:click="inserirShow(true)" v-if="inserirForm === false" unelevated/>
-      <q-btn class="q-mr-sm float-right" color="red" icon="remove_circle" v-on:click="inserirShow(false), editarShow(false)" v-if="inserirForm === true || editarForm === true && checkReg.length != 0" unelevated/>
-      <q-btn class="q-mr-sm float-right" color="red" icon="delete_forever" v-on:click="remove(checkReg)" v-if="inserirForm === false && checkReg.length > 0" unelevated/>
-      <q-btn class="q-mr-sm float-right" color="primary" icon="edit" @click.prevent="toUpdate(checkReg[0])" v-on:click="editarShow(true)" v-if="inserirForm === false && checkReg.length > 0 && checkReg.length < 2" unelevated/>
+      <q-btn class="q-mb-sm float-right" color="green" icon="add_circle" v-on:click="inserirShow(true)" v-if="inserirForm === false && pagarStatus === false" unelevated dense/>
+      <q-btn class="q-mr-sm float-right" color="red" icon="remove_circle" v-on:click="inserirShow(false), editarShow(false), pagarShow(false)" v-if="inserirForm === true || editarForm === true && checkReg.length != 0" unelevated dense/>
+      <q-btn class="q-mr-sm float-right" color="red" icon="delete_forever" v-on:click="remove(checkReg)" v-if="inserirForm === false && checkReg.length > 0 && pagarStatus === false" dense unelevated/>
+      <q-btn class="q-mr-sm float-right" color="primary" icon="edit" @click.prevent="toUpdate(checkReg[0])" v-on:click="editarShow(true)" v-if="inserirForm === false && checkReg.length > 0 && checkReg.length < 2 && pagarStatus === false" unelevated dense/>
+      <q-btn class="q-mr-sm float-right" color="light-green" icon="attach_money" label="pagar" @click.prevent="toUpdate(checkReg[0])" v-on:click="pagarShow(true)" v-if="pagarStatus === false && inserirForm === false && checkReg.length > 0 && checkReg.length < 2" unelevated dense/>
+      <q-btn class="q-mb-sm q-mt-sm float-right" color="red" icon="remove_circle" v-on:click="pagarShow(false)" v-if="pagarStatus === true" unelevated dense/>
       <table>
         <thead>
           <tr>
@@ -98,7 +124,7 @@
             <td data-label="Número Reg" v-if="lanc.nlanc === null"><q-badge class="q-ml-sm" color="red">NULL</q-badge></td>
             <td data-label="Número Lanc" v-else>{{ lanc.nlanc }}</td>
             <td data-label="Número Reg" v-if="lanc.vlrlanc === null"><q-badge class="q-ml-sm" color="red">NULL</q-badge></td>
-            <td data-label="Valor Lanc" v-else> {{ 'R$ ' + formatPrice(lanc.vlrlanc) }} </td>
+            <td data-label="Valor Lanc" v-else> {{ 'R$ ' + formatPrice2(lanc.vlrlanc) }} </td>
             <td data-label="Número Reg" v-if="lanc.dtlanc === null"><q-badge class="q-ml-sm" color="red">NULL</q-badge></td>
             <td data-label="Data Lanc" v-else>{{ lanc.dtlanc | formatDate }}</td>
             <td data-label="Número Reg" v-if="lanc.objlanc === null"><q-badge class="q-ml-sm" color="red">NULL</q-badge></td>
@@ -114,6 +140,7 @@
 </template>
 <script>
 let tokenUser = localStorage.getItem('token')
+import moment from 'moment'
 export default {
   data () {
     return {
@@ -126,12 +153,52 @@ export default {
       inserirForm: false,
       editarForm: false,
       updateStatus: false,
+      pagarStatus: false,
+      previaView: false,
+      previewConfere: false,
       pageNumber: 0,
-      pagination: {
-        descending: false,
-        page: 2,
-        rowsPerPage: 5
-      },
+      optionsFormaP: [
+        {
+          label: 'Dinheiro',
+          value: 1,
+          nomeForma: 'Dinheiro'
+        },
+        {
+          label: 'Cheque',
+          value: 2,
+          nomeForma: 'Cheque'
+        },
+        {
+          label: 'Cartão Master - BB - Vencimento: 03',
+          value: 3,
+          nomeForma: 'Cartão de Crédito',
+          bandeira: 'Master',
+          emissor: 'Banco do Brasil',
+          final: '03',
+          vencimento: '03',
+          melhorVencimento: '21'
+        },
+        {
+          label: 'Cartão Visa - BB - Vencimento: 22',
+          value: 4,
+          nomeForma: 'Cartão de Crédito',
+          bandeira: 'Visa',
+          emissor: 'Banco do Brasil',
+          final: '22',
+          vencimento: '22',
+          melhorVencimento: '10'
+        },
+        {
+          label: 'Cartão Elo - BB - 0992 - Vencimento: 10',
+          value: 5,
+          nomeForma: 'Cartão de Crédito',
+          bandeira: 'Mastercard',
+          emissor: 'Nubank',
+          final: '4419',
+          vencimento: '10',
+          melhorVencimento: '30'
+        }
+      ],
       token: { tokenUser }
     }
   },
@@ -150,6 +217,9 @@ export default {
         this.create()
       }
     },
+    pagar () {
+      this.criarPagar()
+    },
     inserirShow (status) {
       this.inserirForm = status
       this.toSave = {}
@@ -158,9 +228,32 @@ export default {
     editarShow (status) {
       this.editarForm = status
     },
+    pagarShow (status) {
+      this.pagarStatus = status
+      if (status === false) {
+        this.toSave = {}
+        this.checkReg = []
+      }
+    },
     formatPrice (value) {
       let val = (value / 1).toFixed(2).replace('.', ',')
+      return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+    },
+    formatPrice2 (value) {
+      let val = (value / 1).toFixed(2).replace('.', ',')
       return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')
+    },
+    dataHoje (dia, e) {
+      let hoje = new Date()
+      let novoDia = new Date(hoje.setDate(dia))
+      if (!dia) {
+        let hoje = new Date()
+        let newMes = new Date(hoje.setMonth(hoje.getMonth() + e))
+        return moment(newMes).format('DD/MM/YYYY')
+      } else {
+        let newDate = new Date(novoDia.setMonth(hoje.getMonth() + e))
+        return moment(newDate).format('DD/MM/YYYY')
+      }
     },
     registron (n) {
       const reg = this.registros
@@ -243,6 +336,26 @@ export default {
       const campos = this.lancs
       const campoId = campos.find(obj => obj.nlanc === id)
       this.toSave = campoId
+    },
+    criarPagar () {
+      window.axios.post(`${process.env.API}/pagar`, this.toSave)
+        .then(() => {
+          this.toSave = {}
+          this.inserirForm = false
+          this.editarForm = false
+          this.pagarStatus = false
+          this.previaView = false
+          this.previewConfere = false
+          this.getList()
+          this.$q.notify({
+            color: 'green',
+            timeout: 1000,
+            textColor: 'white',
+            icon: 'tag_faces',
+            message: 'Pagamentos enviados com sucesso',
+            position: 'top'
+          })
+        })
     }
   },
   computed: {

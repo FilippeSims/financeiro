@@ -36,41 +36,34 @@ function criaPagar(nlanc, valor, data, forma, obs, pago, callback){
 exports.post = (req, res) =>{
     const nlanc = req.body.nlanc
     const vlrlanc = req.body.vlrlanc
-    const dtlanc = req.body.dtlanc
 
-    const vlrpagar = req.body.vlrpagar
-    const dtpagar= req.body.dtpagar
-    const nformapagar = req.body.nformapagar
     const obspagar = req.body.obspagar
-    const pagopagar = req.body.pagopagar
 
-    if (nlanc){
-        if(vlrpagar && dtpagar){
-            criaPagar(null, vlrpagar, dtpagar, nformapagar, obspagar, pagopagar, function(err){
-                if(err){
-                    res.sendStatus(500)
-                } else{
-                    res.sendStatus(201)
-                }
-            })
-        }else {
-            criaPagar(nlanc, vlrlanc, dtlanc, nformapagar, obspagar, pagopagar, function(err){
-                if(err){
-                    res.sendStatus(500)
-                } else{
-                    res.sendStatus(201)
-                }
+    const formaP = req.body.formaP.label
+    const vencimento = req.body.formaP.vencimento
+    const nparcelas = req.body.nparcelas
+    if(formaP === 'Dinheiro' || formaP === 'Cheque'){
+        for(repetir = 0; repetir < nparcelas; repetir++){
+            let date = new Date()
+            let newDate = new Date(date.setMonth(date.getMonth() + (repetir + 1)))
+            let valorParcela = vlrlanc / nparcelas
+            criaPagar(nlanc, valorParcela, newDate, formaP, obspagar, 'Não', function(err, result){
+                return result
             })
         }
-    } else{
-        criaPagar(null, vlrpagar, dtpagar, nformapagar, obspagar, pagopagar, function(err){
-            if(err){
-                res.sendStatus(500)
-            } else{
-                res.sendStatus(201)
-            }
-        })
+    } else {
+        let repetir
+        for(repetir = 0; repetir < nparcelas; repetir++){
+            let date = new Date()
+            let novoDia = new Date(date.setDate(vencimento))
+            let newDate = new Date(novoDia.setMonth(novoDia.getMonth() + (repetir + 1)))
+            let valorParcela = vlrlanc / nparcelas
+            criaPagar(nlanc, valorParcela, newDate, formaP, obspagar, 'Não', function(err, result){
+               return result
+            })
+        }
     }
+    res.status(200).json({ color: 'green', icon: 'mood', msg: 'Pagamentos enviados com sucesso!' })
 }
 /* FIM POST*/
 
