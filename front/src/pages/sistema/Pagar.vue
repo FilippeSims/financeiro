@@ -50,7 +50,7 @@
           <q-input dense filled v-model="toSave.dtlanc" label="Data" hint="Data do pagar" />
           <q-input dense filled v-model="toSave.nformapagar" label="Forma de pagamento" hint="Forma de pagamento" />
           <q-input dense filled v-model="toSave.obspagar" label="Observação" hint="Observação do pagar" />
-          <q-input dense filled v-model="toSave.pagopagar" label="Pago" hint="Pago?" />
+          <q-select dense filled v-model="toSave.pagopagar" label="Forma de pagamento" hint="Forma de Pagamento" :options="optionsPago" />
           <div>
             <q-btn type="submit" color="green" icon="send" class="q-mb-sm float-left" unelevated />
           </div>
@@ -63,7 +63,7 @@
           <q-date v-model="toSave.dtpagar" minimal/>
           <q-input dense filled v-model="toSave.nformapagar" label="Objeto" hint="Forma de pagamento" />
           <q-input dense filled v-model="toSave.obspagar" label="Observação" hint="Observação do pagar" />
-          <q-input dense filled v-model="toSave.pagopagar" label="Pago" hint="Pago?" />
+          <q-select dense filled v-model="toSave.pagopagar" label="Forma de pagamento" hint="Forma de Pagamento" :options="optionsPago" />
         <div>
           <q-btn type="submit" color="green" icon="send" class="q-mb-sm float-left" unelevated />
         </div>
@@ -84,7 +84,7 @@
             <th scope="col">Data Pagar</th>
             <th scope="col">Forma</th>
             <th scope="col">Obs Pagar</th>
-            <th scope="col">Pago</th>
+            <th scope="col">Pago?</th>
           </tr>
         </thead>
         <tbody>
@@ -101,11 +101,28 @@
             <td data-label="Data Pagar" v-if="paga.dtpagar === null"><q-badge class="q-ml-sm" color="red">NULL</q-badge></td>
             <td data-label="Data Pagar" v-else>{{ paga.dtpagar | formatDate }}</td>
             <td data-label="Forma" v-if="paga.nformapagar === null"><q-badge class="q-ml-sm" color="red">NULL</q-badge></td>
-            <td data-label="Forma" v-else>{{ paga.nformapagar }}</td>
-            <td data-label="Descrição Pagar" v-if="paga.obspagar === null"><q-badge class="q-ml-sm" color="red">NULL</q-badge></td>
-            <td data-label="Descrição Pagar" v-else>{{ paga.obspagar }}</td>
-            <td data-label="Número Pagar" v-if="paga.pagopagar === null"><q-badge class="q-ml-sm" color="red">NULL</q-badge></td>
-            <td data-label="Número Pagar" v-else>{{ paga.pagopagar }}</td>
+            <td data-label="Forma" v-else>
+              <q-icon name="ion-cash" color="green" size="30px" v-if="paga.nomeforma === 'Dinheiro'">
+                <q-tooltip :offset="[0, 0]">
+                  {{ paga.nomeforma }}
+                </q-tooltip>
+              </q-icon>
+              <q-icon name="subtitles" color="amber-4" size="30px" v-if="paga.nomeforma === 'Cheque'">
+                <q-tooltip :offset="[0, 0]">
+                  {{ paga.nomeforma }}
+                </q-tooltip>
+              </q-icon>
+              <q-icon name="ion-card" color="primary" size="30px" v-if="paga.nomeforma === 'Cartão de Crédito'">
+                <q-badge color="amber-8" floating>{{ paga.vencimentoforma }}</q-badge>
+                <q-tooltip :offset="[0, 0]">
+                  {{ paga.emissorforma }} | {{ paga.bandeiraforma }} | {{ paga.vencimentoforma }}
+                </q-tooltip>
+              </q-icon>
+            </td>
+            <td data-label="Obs Pagar" v-if="paga.obspagar === null || paga.obspagar === 'null'"><q-badge class="q-ml-sm" color="red">NULL</q-badge></td>
+            <td data-label="Obs Pagar" v-else>{{ paga.obspagar }}</td>
+            <td data-label="Pago?" v-if="paga.pagopagar === 'Não'"><q-badge class="q-ml-sm" color="red">{{ paga.pagopagar }}</q-badge></td>
+            <td data-label="Pago?" v-else><q-badge class="q-ml-sm" color="positive">{{ paga.pagopagar }}</q-badge></td>
           </tr>
         </tbody>
       </table>
@@ -133,7 +150,10 @@ export default {
         page: 2,
         rowsPerPage: 5
       },
-      token: { tokenUser }
+      token: { tokenUser },
+      optionsPago: [
+        'Sim', 'Não'
+      ]
     }
   },
   props: {

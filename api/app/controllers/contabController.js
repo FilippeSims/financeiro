@@ -1,8 +1,8 @@
 var db = require('../pg/config')
 
 /* GET  */
-function todosLanc(callback){
-    db.pool.query('SELECT * FROM pagar', function(err, res) {
+function todosContab(callback){
+    db.pool.query('SELECT * FROM contab', function(err, res) {
         if(err){
             callback(err, null)
         } else{
@@ -12,11 +12,11 @@ function todosLanc(callback){
 }
 
 exports.get = (req, res) => {
-    todosLanc(function (err, pagar) {
+    todosContab(function (err, contab) {
         if (err) {
             res.sendStatus(500)
         } else {
-            res.send(JSON.stringify(pagar))
+            res.send(JSON.stringify(contab))
         }
     })
 }

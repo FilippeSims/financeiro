@@ -110,6 +110,13 @@ const menuList = [
     icon: 'control_point',
     label: 'Pagar',
     to: '/sistema/pagar',
+    separator: false,
+    rule: 'guest'
+  },
+  {
+    icon: 'control_point',
+    label: 'Contabilizar',
+    to: '/sistema/contab',
     separator: true,
     rule: 'guest'
   },

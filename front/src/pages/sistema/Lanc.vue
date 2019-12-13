@@ -4,8 +4,6 @@
       <q-breadcrumbs-el icon="home" to="/sistema" />
       <q-breadcrumbs-el label="Lançamentos" icon="widgets" to="/sistema/lanc" />
     </q-breadcrumbs>
-    {{ checkReg }}
-    {{ toSave }}
     <div id="pagar" v-if="pagarStatus === true">
       <div id="tituloForm" class="q-mt-sm" v-if="pagarStatus === true">
         <b>Pagar</b>
@@ -26,6 +24,23 @@
           <q-btn type="submit" color="green" icon="send" class="q-mt-sm float-left" unelevated dense v-if="previewConfere === true" />
         </div>
         <q-btn type="submit" color="green" v-on:click="previaView = true" icon="visibility" class="q-mt-sm float-left" unelevated dense v-if="previaView === false"/>
+      </q-form>
+    </div>
+    <div id="contab" v-if="contabStatus === true">
+      <div id="tituloForm" class="q-mt-sm" v-if="contabStatus === true">
+        <b>Contab</b>
+      </div>
+      <q-form @submit.prevent="pagar()" class="q-gutter-md q-mt-sm">
+        <q-input dense filled label="Número lançamento" v-model="toSave.nlanc"/>
+        <q-input dense filled label="Valor lançamento" v-model="toSave.vlrlanc"/>
+        <q-input type="number" dense filled label="Número lançamento" v-model="quantidadeForm" value="2"/>
+          <div class="q-gutter-xm row" v-for="quantidade in parseInt(quantidadeForm)" :key="quantidade">
+            <q-select dense class="selectContab q-mr-sm" filled label="Número Plano de Conta" hint="Número do Plano de Conta" :options="planoConta" option-disable="inactive" option-value="nconta" option-label="descricaoconta" emit-value map-options v-model="toSave['planoConta_' + quantidade]"/>
+            <q-select dense class="selectContab2" filled label="Tipo Contab" hint="Tipo de Contabilização" :options="optionTipoContab" v-model="toSave['tipoContab_' + quantidade]"/>
+            <q-input dense class="selectContab q-ml-sm" filled prefix="R$" mask="#.##" reverse-fill-mask label="Valor" hint="Valor do lançamento" v-model="toSave['vlrlanc_' + quantidade]" />
+          </div>
+        <q-input filled dense label="Observação" hint="Observação do registro" hide-underline="true" type="textarea" rows="2" v-model="toSave.obsContab"/>
+        <q-btn type="submit" color="green" icon="send" class="q-mt-sm q-mb-sm float-left" unelevated dense/>
       </q-form>
     </div>
     <div id="formLanc" v-if="inserirForm === true || editarForm === true && checkReg.length < 2 && checkReg.length != 0">
@@ -99,6 +114,7 @@
       <q-btn class="q-mr-sm float-right" color="red" icon="remove_circle" v-on:click="inserirShow(false), editarShow(false), pagarShow(false)" v-if="inserirForm === true || editarForm === true && checkReg.length != 0" unelevated dense/>
       <q-btn class="q-mr-sm float-right" color="red" icon="delete_forever" v-on:click="remove(checkReg)" v-if="inserirForm === false && checkReg.length > 0 && pagarStatus === false" dense unelevated/>
       <q-btn class="q-mr-sm float-right" color="primary" icon="edit" @click.prevent="toUpdate(checkReg[0])" v-on:click="editarShow(true)" v-if="inserirForm === false && checkReg.length > 0 && checkReg.length < 2 && pagarStatus === false" unelevated dense/>
+      <q-btn class="q-mr-sm float-right" color="teal-4" icon="assignment" label="Contab" @click.prevent="toUpdate(checkReg[0])" v-on:click="contabShow(true)" v-if="pagarStatus === false && inserirForm === false && checkReg.length > 0 && checkReg.length < 2" unelevated dense/>
       <q-btn class="q-mr-sm float-right" color="light-green" icon="attach_money" label="pagar" @click.prevent="toUpdate(checkReg[0])" v-on:click="pagarShow(true)" v-if="pagarStatus === false && inserirForm === false && checkReg.length > 0 && checkReg.length < 2" unelevated dense/>
       <q-btn class="q-mb-sm q-mt-sm float-right" color="red" icon="remove_circle" v-on:click="pagarShow(false)" v-if="pagarStatus === true" unelevated dense/>
       <table>
@@ -156,7 +172,21 @@ export default {
       pagarStatus: false,
       previaView: false,
       previewConfere: false,
+      contabStatus: false,
       pageNumber: 0,
+      quantidadeForm: 2,
+      planoConta: { data: [] },
+      optionTipoContab:
+      [
+        {
+          value: 'cred',
+          label: 'Crédito'
+        },
+        {
+          value: 'deb',
+          label: 'Débito'
+        }
+      ],
       optionsFormaP: [
         {
           label: 'Dinheiro',
@@ -235,6 +265,13 @@ export default {
         this.checkReg = []
       }
     },
+    contabShow (status) {
+      this.contabStatus = status
+      if (status === false) {
+        this.toSave = {}
+        this.checkReg = []
+      }
+    },
     formatPrice (value) {
       let val = (value / 1).toFixed(2).replace('.', ',')
       return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
@@ -272,6 +309,11 @@ export default {
     prevPage () {
       this.pageNumber--
       console.log('prev')
+    },
+    getContab () {
+      window.axios.get(`${process.env.API}/planocontas`, { headers: { 'x-access-token': this.token.tokenUser } }).then(res => {
+        this.planoConta = res.data
+      })
     },
     getList () {
       window.axios.get(`${process.env.API}/lanc`, { headers: { 'x-access-token': this.token.tokenUser } }).then(res => {
@@ -374,6 +416,7 @@ export default {
   mounted () {
     this.getRegistro()
     this.getList()
+    this.getContab()
   }
 }
 </script>

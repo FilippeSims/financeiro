@@ -121,3 +121,13 @@ table {
   .loginCampo p{
     text-align: center;
   }
+
+  .selectContab{
+    width: 100%;
+    max-width: 33%;
+  }
+
+  .selectContab2{
+    width: 100%;
+    max-width: 28%;
+  }

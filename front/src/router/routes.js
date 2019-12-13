@@ -17,6 +17,7 @@ const routes = [
       { path: '/sistema/lanc', component: () => import('pages/sistema/Lanc.vue') },
       { path: '/sistema/doc', component: () => import('pages/sistema/Doc.vue') },
       { path: '/sistema/pagar', component: () => import('pages/sistema/Pagar.vue') },
+      { path: '/sistema/contab', component: () => import('pages/sistema/Contab.vue') },
       { path: '/sistema/sair', component: () => import('pages/sistema/Sair.vue') }
     ]
   }
