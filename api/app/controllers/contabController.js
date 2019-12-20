@@ -23,9 +23,8 @@ exports.get = (req, res) => {
 /* FIM GET */
 
 /* POST */
-function criaPagar(nlanc, valor, data, forma, obs, pago, formaPNome, formaPBandeira, formaPEmissor, vencimento, callback){
-    db.pool.query('INSERT INTO pagar (nlanc, vlrpagar, dtpagar, nformapagar, obspagar, pagopagar, nomeforma, bandeiraforma, emissorforma, vencimentoforma) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING *', [nlanc, valor, data, forma, obs, pago, formaPNome, formaPBandeira, formaPEmissor, vencimento], function(err, res){
-        console.log(err, res)
+function criaContab(data, nlanc, nconta, tipoContab, valor, obsContab, callback){
+    db.pool.query('INSERT INTO contab (datacontab, nlanc, nconta, tipocontab, valorcontab, obscontab) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *', [data, nlanc, nconta, tipoContab, valor, obsContab], function(err, res){
         if(err){
             callback(err, null)
         } else{
@@ -35,39 +34,24 @@ function criaPagar(nlanc, valor, data, forma, obs, pago, formaPNome, formaPBande
 }
 
 exports.post = (req, res) =>{
+    const data = new Date().toDateString()
     const nlanc = req.body.nlanc
-    const vlrlanc = req.body.vlrlanc
+    const qtd = req.body.qtd
+    const obsContab = req.body.obsContab
+    for(repetir = 0; repetir < qtd; repetir++){
+        somaRepetir = (repetir + 1)
+        const nconta = req.body['planoConta' + somaRepetir]
+        const tipoContab = req.body['tipoContab' + somaRepetir].value
+        const valor = req.body['vlrlanc' + somaRepetir]
 
-    const obspagar = req.body.obspagar
+        criaContab(data, nlanc, nconta, tipoContab, valor, obsContab, function(err, contab){
+            // if(err){
 
-    const formaP = req.body.formaP.label
-    const formaPNome = req.body.formaP.nomeForma
-    const formaPBandeira = req.body.formaP.bandeira
-    const formaPEmissor = req.body.formaP.emissor
-    const vencimento = req.body.formaP.vencimento
-    const nparcelas = req.body.nparcelas
-    if(formaP === 'Dinheiro' || formaP === 'Cheque'){
-        for(repetir = 0; repetir < nparcelas; repetir++){
-            let date = new Date()
-            let newDate = new Date(date.setMonth(date.getMonth() + (repetir + 1)))
-            let valorParcela = vlrlanc / nparcelas
-            criaPagar(nlanc, valorParcela, newDate, formaP, obspagar, 'Não', formaPNome, formaPBandeira, formaPEmissor, vencimento, function(err, result){
-                return result
-            })
-        }
-    } else {
-        let repetir
-        for(repetir = 0; repetir < nparcelas; repetir++){
-            let date = new Date()
-            let novoDia = new Date(date.setDate(vencimento))
-            let newDate = new Date(novoDia.setMonth(novoDia.getMonth() + (repetir + 1)))
-            let valorParcela = vlrlanc / nparcelas
-            criaPagar(nlanc, valorParcela, newDate, formaP, obspagar, 'Não', formaPNome, formaPBandeira, formaPEmissor, vencimento, function(err, result){
-               return result
-            })
-        }
+            // } else{
+            //     res.status(200).json({ color: 'green', icon: 'mood', msg: 'Operação realizada com sucesso!' })
+            // }
+        })
     }
-    res.status(200).json({ color: 'green', icon: 'mood', msg: 'Pagamentos enviados com sucesso!' })
 }
 /* FIM POST*/
 

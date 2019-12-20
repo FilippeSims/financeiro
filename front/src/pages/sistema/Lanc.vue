@@ -30,16 +30,18 @@
       <div id="tituloForm" class="q-mt-sm" v-if="contabStatus === true">
         <b>Contab</b>
       </div>
-      <q-form @submit.prevent="pagar()" class="q-gutter-md q-mt-sm">
-        <q-input dense filled label="Número lançamento" v-model="toSave.nlanc"/>
+      <q-form @submit.prevent="contab()" class="q-gutter-md q-mt-sm">
+        <q-input dense filled label="Número lançamento" v-model="toSave.nlanc" disable/>
         <q-input dense filled label="Valor lançamento" v-model="toSave.vlrlanc"/>
-        <q-input type="number" dense filled label="Número lançamento" v-model="quantidadeForm" value="2"/>
+        <q-input type="number" dense filled label="Número lançamento" v-model="quantidadeForm"/>
           <div class="q-gutter-xm row" v-for="quantidade in parseInt(quantidadeForm)" :key="quantidade">
-            <q-select dense class="selectContab q-mr-sm" filled label="Número Plano de Conta" hint="Número do Plano de Conta" :options="planoConta" option-disable="inactive" option-value="nconta" option-label="descricaoconta" emit-value map-options v-model="toSave['planoConta_' + quantidade]"/>
-            <q-select dense class="selectContab2" filled label="Tipo Contab" hint="Tipo de Contabilização" :options="optionTipoContab" v-model="toSave['tipoContab_' + quantidade]"/>
-            <q-input dense class="selectContab q-ml-sm" filled prefix="R$" mask="#.##" reverse-fill-mask label="Valor" hint="Valor do lançamento" v-model="toSave['vlrlanc_' + quantidade]" />
+            <q-select dense class="selectContab q-mr-sm" filled label="Número Plano de Conta" hint="Número do Plano de Conta" :options="planoConta" option-disable="inactive" option-value="nconta" option-label="descricaoconta" emit-value map-options v-model="toSave['planoConta' + quantidade]"/>
+            <q-select dense class="selectContab2" filled label="Tipo Contab" hint="Tipo de Contabilização" :options="optionTipoContab" v-model="toSave['tipoContab' + quantidade]"/>
+            <q-input dense class="selectContab q-ml-sm" filled prefix="R$" mask="#.##" reverse-fill-mask label="Valor" hint="Valor do lançamento" v-model="toSave['vlrlanc' + quantidade]" />
           </div>
         <q-input filled dense label="Observação" hint="Observação do registro" hide-underline="true" type="textarea" rows="2" v-model="toSave.obsContab"/>
+        <q-input dense filled label="Verificação Contab" v-model="verificacaoContab"/>
+        <q-btn color="green" icon="help" v-on:click="testando(quantidadeForm, toSave.vlrlanc)"  class="q-mt-sm q-mb-sm float-left" unelevated dense/>
         <q-btn type="submit" color="green" icon="send" class="q-mt-sm q-mb-sm float-left" unelevated dense/>
       </q-form>
     </div>
@@ -176,6 +178,7 @@ export default {
       pageNumber: 0,
       quantidadeForm: 2,
       planoConta: { data: [] },
+      verificacaoContab: 0,
       optionTipoContab:
       [
         {
@@ -250,6 +253,9 @@ export default {
     pagar () {
       this.criarPagar()
     },
+    contab () {
+      this.criarContab()
+    },
     inserirShow (status) {
       this.inserirForm = status
       this.toSave = {}
@@ -271,6 +277,202 @@ export default {
         this.toSave = {}
         this.checkReg = []
       }
+    },
+    // somaContab (qtd) {
+    //   var repetir = 0
+    //   var soma = 0
+    //   for (repetir = 0; repetir < qtd; repetir++) {
+    //     const somaRepetir = (repetir + 1)
+    //     soma += parseFloat(this.toSave['vlrlanc' + somaRepetir])
+    //   }
+    //   console.log(soma)
+    // },
+    planoCont (qtd) {
+      var repetir = 0
+      var plano = 0
+      var tipo = 0
+      var valor = 0
+      var container = []
+      for (repetir = 0; repetir < qtd; repetir++) {
+        const somaRepetir = (repetir + 1)
+        plano = this.toSave['planoConta' + somaRepetir]
+        tipo = this.toSave['tipoContab' + somaRepetir].value
+        valor = this.toSave['vlrlanc' + somaRepetir]
+        var newArray = {}
+        newArray = [
+          { planoCon: plano },
+          { tipoCon: tipo },
+          { val: valor }
+        ]
+        container.push(newArray)
+      }
+      return container
+    },
+    buscarTipoPlano (qtd) {
+      var repetir = 0
+      var container = []
+      var planoCon = this.planoCont(qtd)
+      for (repetir = 0; repetir < qtd; repetir++) {
+        const n = planoCon[repetir][0]
+        var json = this.planoConta
+        const findTipoPlanoConta = json.filter(x => x.nconta === n.planoCon).map(x => x.tipoconta)
+        const arrayTipoPlanoConta = [
+          { tipoPlano: findTipoPlanoConta }
+        ]
+        container.push(arrayTipoPlanoConta)
+      }
+      return container
+    },
+    testando (qtd, valorLanc) {
+      var planoCon = this.planoCont(qtd)
+      var tipoCon = this.buscarTipoPlano(qtd)
+      var repetir = 0
+      var somaDCred = 0
+      var somaDDeb = 0
+      var somaCCred = 0
+      var somaCDeb = 0
+      var saldo = []
+      for (repetir = 0; repetir < qtd; repetir++) {
+        var cond = tipoCon[repetir][0].tipoPlano[0]
+        var tipo = planoCon[repetir][1].tipoCon
+        // D = DEVEDORA
+        // C = CREDORA
+        // CRED = CRÉDITO
+        // DEB = DÉBITO
+        if (cond === 'd') {
+          // D / CRED -
+          if (tipo === 'cred') {
+            const somaRepetir = (repetir + 1)
+            somaDCred += parseFloat(this.toSave['vlrlanc' + somaRepetir])
+          }
+          if (tipo === 'deb') {
+            const somaRepetir = (repetir + 1)
+            somaDDeb += parseFloat(this.toSave['vlrlanc' + somaRepetir])
+          }
+        }
+        if (cond === 'c') {
+          // D / CRED +
+          if (tipo === 'cred') {
+            const somaRepetir = (repetir + 1)
+            somaCCred += parseFloat(this.toSave['vlrlanc' + somaRepetir])
+          }
+          if (tipo === 'deb') {
+            const somaRepetir = (repetir + 1)
+            somaCDeb += parseFloat(this.toSave['vlrlanc' + somaRepetir])
+          }
+        }
+      }
+      var somaDevedor = (somaDCred - somaDDeb)
+      var somaCredor = (somaCCred - somaCDeb)
+      var verificaLancContab = (valorLanc === somaDevedor)
+      var resultadoContab = (somaDevedor + somaCredor)
+      var mensagem = []
+
+      for (repetir = 0; repetir < qtd; repetir++) {
+        var cond2 = tipoCon[repetir][0].tipoPlano[0]
+        var tipo2 = planoCon[repetir][1].tipoCon
+        if (cond2 === 'd' && tipo2 === 'cred') {
+          const n = planoCon[repetir][0]
+          var json = this.planoConta
+          const findSaldoConta = json.filter(x => x.nconta === n.planoCon).map(x => x.saldoconta)
+          const findDescricao = json.filter(x => x.nconta === n.planoCon).map(x => x.descricaoconta)
+          const arraySaldoConta = [
+            { saldoconta: findSaldoConta },
+            { descricaoconta: findDescricao }
+          ]
+          saldo.push(arraySaldoConta)
+        }
+      }
+      var countArraySaldo = saldo.length
+      var valorBate = false
+      var valorBate1 = false
+      var saldoOk = false
+      var verificaSaldo = 0
+      var verificaDescricao = ''
+      var valorDigitado = 0
+      for (repetir = 0; repetir < countArraySaldo; repetir++) {
+        const somaRepetir = (repetir + 1)
+        verificaSaldo = saldo[repetir][0].saldoconta[0]
+        verificaDescricao = saldo[repetir][1].descricaoconta[0]
+        valorDigitado = parseFloat(this.toSave['vlrlanc' + somaRepetir])
+        if (valorDigitado <= verificaSaldo) {
+          valorBate = true
+          valorBate1 = true
+        } else {
+          valorBate = true
+          valorBate1 = false
+        }
+        if (valorBate === true && valorBate1 === true) {
+          saldoOk = true
+        } else {
+          saldoOk = false
+          mensagem = [
+            { color: 'warning' },
+            { textColor: 'black' },
+            { icon: 'warning' },
+            { msg: 'Você não tem saldo suficiente em ' + verificaDescricao + '!' }
+          ]
+          this.$q.notify({
+            color: mensagem[0].color,
+            timeout: 5000,
+            textColor: mensagem[1].textColor,
+            icon: mensagem[2].icon,
+            message: mensagem[3].msg,
+            position: 'top'
+          })
+        }
+      }
+      if (saldoOk === true) {
+        if (verificaLancContab === true) {
+          if (resultadoContab === 0) {
+            this.$q.notify({
+              color: 'green',
+              timeout: 5000,
+              textColor: 'white',
+              icon: 'mood',
+              message: 'Operação realizada com sucesso!',
+              position: 'top'
+            })
+          } else {
+            this.$q.notify({
+              color: 'warning',
+              timeout: 5000,
+              textColor: 'black',
+              icon: 'warning',
+              message: 'Verique os valores da conta devedor e credor!',
+              position: 'top'
+            })
+          }
+        } else {
+          this.$q.notify({
+            color: 'warning',
+            timeout: 5000,
+            textColor: 'black',
+            icon: 'warning',
+            message: 'O valor está diferente do que o lançamento!',
+            position: 'top'
+          })
+        }
+      }
+      // console.log('Soma Devedor: ' + somaDevedor)
+      // console.log('Soma Credor: ' + somaCredor)
+      // console.log('Soma Resultado: ' + resultadoContab)
+      // console.log('Valor do Lançamento: ' + valorLanc)
+      // console.log('Correto: ' + verificaLancContab)
+      // Saldo da conta
+      // Lançamento
+      // const somaDCredDeb = (somaDCred - somaDDeb)
+      // const somaCCredDeb = (somaCDeb - somaCCred)
+      // console.log(somaDCredDeb - somaCCredDeb)
+      // this.verificacaoContab = somaDCredDeb
+      // ANTIGO
+      // this.somaContab(qtd, valorLanc)
+      // const somaValores = this.somaContab(qtd, valorLanc)
+      // if (somaValores !== valorLanc) {
+      //   console.log('Valores diferentes!')
+      // } else {
+      //   console.log('Você pode continuar!')
+      // }
     },
     formatPrice (value) {
       let val = (value / 1).toFixed(2).replace('.', ',')
@@ -395,6 +597,32 @@ export default {
             textColor: 'white',
             icon: 'tag_faces',
             message: 'Pagamentos enviados com sucesso',
+            position: 'top'
+          })
+        })
+    },
+    criarContab () {
+      const obj1 = this.toSave
+
+      const obj2 = {
+        qtd: this.quantidadeForm
+      }
+      const obj = Object.assign({}, obj1, obj2)
+      window.axios.post(`${process.env.API}/contab`, obj)
+        .then(() => {
+          this.toSave = {}
+          this.inserirForm = false
+          this.editarForm = false
+          this.pagarStatus = false
+          this.previaView = false
+          this.previewConfere = false
+          this.getList()
+          this.$q.notify({
+            color: 'green',
+            timeout: 1000,
+            textColor: 'white',
+            icon: 'tag_faces',
+            message: 'Comtab enviados com sucesso',
             position: 'top'
           })
         })
