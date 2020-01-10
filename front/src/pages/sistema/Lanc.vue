@@ -10,7 +10,7 @@
       </div>
       <q-form @submit.prevent="pagar()" class="q-gutter-md q-mt-sm">
         <q-input dense filled label="Número lançamento" v-model="toSave.nlanc"/>
-        <q-input dense filled prefix="R$" mask="#.##" reverse-fill-mask label="Valor" hint="Valor do lançamento" v-model="toSave.vlrlanc" />
+        <q-input dense filled prefix="R$" label="Valor" hint="Valor do lançamento" v-model="toSave.vlrlanc" />
         <q-input filled dense label="Observação" hint="Observação do registro" hide-underline="true" type="textarea" rows="2" v-model="toSave.obspagar"/>
         <q-select dense filled label="Forma de pagamento" hint="Forma de Pagamento" :options="optionsFormaP" v-model="toSave.formaP"/>
         <q-input dense filled label="Parcelas" hint="Número de Parcelas" lazy-rules :rules="[ val => val && val.length > 0 || 'Por favor digite um número de parcelas!', val => val !== '0' || 'O número de parcelas não pode ser 0!']" v-model="toSave.nparcelas"/>
@@ -30,6 +30,7 @@
       <div id="tituloForm" class="q-mt-sm" v-if="contabStatus === true">
         <b>Contab</b>
       </div>
+      {{ toSave }}
       <q-form @submit.prevent="contab()" class="q-gutter-md q-mt-sm">
         <q-input dense filled label="Número lançamento" v-model="toSave.nlanc" disable/>
         <q-input dense filled label="Valor lançamento" v-model="toSave.vlrlanc"/>
@@ -37,7 +38,7 @@
           <div class="q-gutter-xm row" v-for="quantidade in parseInt(quantidadeForm)" :key="quantidade">
             <q-select dense class="selectContab q-mr-sm" filled label="Número Plano de Conta" hint="Número do Plano de Conta" :options="planoConta" option-disable="inactive" option-value="nconta" option-label="descricaoconta" emit-value map-options v-model="toSave['planoConta' + quantidade]"/>
             <q-select dense class="selectContab2" filled label="Tipo Contab" hint="Tipo de Contabilização" :options="optionTipoContab" v-model="toSave['tipoContab' + quantidade]"/>
-            <q-input dense class="selectContab q-ml-sm" filled prefix="R$" mask="#.##" reverse-fill-mask label="Valor" hint="Valor do lançamento" v-model="toSave['vlrlanc' + quantidade]" />
+            <q-input dense class="selectContab q-ml-sm" filled prefix="R$" label="Valor" hint="Valor do lançamento" v-model="toSave['vlrlanc' + quantidade]" />
           </div>
         <q-input filled dense label="Observação" hint="Observação do registro" hide-underline="true" type="textarea" rows="2" v-model="toSave.obsContab"/>
         <q-input dense filled label="Verificação Contab" v-model="verificacaoContab"/>
@@ -425,14 +426,18 @@ export default {
       if (saldoOk === true) {
         if (verificaLancContab === true) {
           if (resultadoContab === 0) {
-            this.$q.notify({
-              color: 'green',
-              timeout: 5000,
-              textColor: 'white',
-              icon: 'mood',
-              message: 'Operação realizada com sucesso!',
-              position: 'top'
-            })
+            this.toSave.qtd = this.quantidadeForm
+            window.axios.post(`${process.env.API}/contab`, this.toSave)
+              .then(() => {
+                this.$q.notify({
+                  color: 'green',
+                  timeout: 5000,
+                  textColor: 'white',
+                  icon: 'mood',
+                  message: 'Operação realizada com sucesso!',
+                  position: 'top'
+                })
+              })
           } else {
             this.$q.notify({
               color: 'warning',
@@ -454,25 +459,6 @@ export default {
           })
         }
       }
-      // console.log('Soma Devedor: ' + somaDevedor)
-      // console.log('Soma Credor: ' + somaCredor)
-      // console.log('Soma Resultado: ' + resultadoContab)
-      // console.log('Valor do Lançamento: ' + valorLanc)
-      // console.log('Correto: ' + verificaLancContab)
-      // Saldo da conta
-      // Lançamento
-      // const somaDCredDeb = (somaDCred - somaDDeb)
-      // const somaCCredDeb = (somaCDeb - somaCCred)
-      // console.log(somaDCredDeb - somaCCredDeb)
-      // this.verificacaoContab = somaDCredDeb
-      // ANTIGO
-      // this.somaContab(qtd, valorLanc)
-      // const somaValores = this.somaContab(qtd, valorLanc)
-      // if (somaValores !== valorLanc) {
-      //   console.log('Valores diferentes!')
-      // } else {
-      //   console.log('Você pode continuar!')
-      // }
     },
     formatPrice (value) {
       let val = (value / 1).toFixed(2).replace('.', ',')

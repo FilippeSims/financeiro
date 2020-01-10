@@ -46,7 +46,7 @@
             </q-badge>
           </li>
           <q-input dense filled label="Número Registro" hint="Número do registro" v-model="toSave.nlanc" disable/>
-          <q-input dense filled label="Valor" hint="Valor do lançamento" prefix="R$" mask="#.##" reverse-fill-mask v-model="toSave.vlrlanc" />
+          <q-input dense filled label="Valor" hint="Valor do lançamento" prefix="R$" v-model="toSave.vlrlanc" />
           <q-input dense filled v-model="toSave.dtlanc" label="Data" hint="Data do pagar" />
           <q-input dense filled v-model="toSave.nformapagar" label="Forma de pagamento" hint="Forma de pagamento" />
           <q-input dense filled v-model="toSave.obspagar" label="Observação" hint="Observação do pagar" />
@@ -70,10 +70,10 @@
         </q-form>
       </div>
       </div>
-      <q-btn class="q-mb-sm float-right" color="green" icon="add_circle" v-on:click="inserirShow(true)" v-if="inserirForm === false" unelevated/>
-      <q-btn class="q-mr-sm float-right" color="red" icon="remove_circle" v-on:click="inserirShow(false), editarShow(false)" v-if="inserirForm === true || editarForm === true && checkReg.length != 0" unelevated/>
-      <q-btn class="q-mr-sm float-right" color="red" icon="delete_forever" v-on:click="remove(checkReg)" v-if="inserirForm === false && checkReg.length > 0" unelevated/>
-      <q-btn class="q-mr-sm float-right" color="primary" icon="edit" @click.prevent="toUpdate(checkReg[0])" v-on:click="editarShow(true)" v-if="inserirForm === false && checkReg.length > 0 && checkReg.length < 2" unelevated/>
+      <q-btn class="q-mb-sm float-right" color="green" icon="add_circle" v-on:click="inserirShow(true)" v-if="inserirForm === false" unelevated dense/>
+      <q-btn class="q-mr-sm float-right" color="red" icon="remove_circle" v-on:click="inserirShow(false), editarShow(false)" v-if="inserirForm === true || editarForm === true && checkReg.length != 0" unelevated dense/>
+      <q-btn class="q-mr-sm float-right" color="red" icon="delete_forever" v-on:click="remove(checkReg)" v-if="inserirForm === false && checkReg.length > 0" unelevated dense/>
+      <q-btn class="q-mr-sm float-right" color="primary" icon="edit" @click.prevent="toUpdate(checkReg[0])" v-on:click="editarShow(true)" v-if="inserirForm === false && checkReg.length > 0 && checkReg.length < 2" unelevated dense/>
       <table>
         <thead>
           <tr>

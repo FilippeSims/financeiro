@@ -25,6 +25,7 @@ exports.get = (req, res) => {
 /* POST */
 function criaContab(data, nlanc, nconta, tipoContab, valor, obsContab, callback){
     db.pool.query('INSERT INTO contab (datacontab, nlanc, nconta, tipocontab, valorcontab, obscontab) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *', [data, nlanc, nconta, tipoContab, valor, obsContab], function(err, res){
+        console.log(err,res)
         if(err){
             callback(err, null)
         } else{
@@ -34,30 +35,41 @@ function criaContab(data, nlanc, nconta, tipoContab, valor, obsContab, callback)
 }
 
 exports.post = (req, res) =>{
-    const data = new Date().toDateString()
-    const nlanc = req.body.nlanc
-    const qtd = req.body.qtd
-    const obsContab = req.body.obsContab
-    for(repetir = 0; repetir < qtd; repetir++){
-        somaRepetir = (repetir + 1)
-        const nconta = req.body['planoConta' + somaRepetir]
-        const tipoContab = req.body['tipoContab' + somaRepetir].value
-        const valor = req.body['vlrlanc' + somaRepetir]
-
+    var data = new Date()
+    var nlanc = req.body.nlanc
+    if(req.body.qtd){
+        var qtd = req.body.qtd.toString()
+    }
+    var obsContab = req.body.obsContab
+    if(req.body.qtd){
+        for(repetir = 0; repetir <qtd; repetir ++){
+            somaRepetir = (repetir + 1)
+            const nconta = req.body['planoConta' + somaRepetir]
+            const tipoContab = req.body['tipoContab' + somaRepetir].value
+            const valor = req.body['vlrlanc' + somaRepetir]
+            criaContab(data, nlanc, nconta, tipoContab, valor, obsContab, function(err, contab){
+            })
+        }
+        res.status(200).json({ color: 'green', icon: 'mood', msg: 'Operação realizada com sucesso!' })
+    } else {
+        const nconta = req.body.nconta
+        const tipoContab = req.body.tipocontab
+        const valor = req.body.valorcontab
+        const obsContab = req.body.obscontab
         criaContab(data, nlanc, nconta, tipoContab, valor, obsContab, function(err, contab){
-            // if(err){
-
-            // } else{
-            //     res.status(200).json({ color: 'green', icon: 'mood', msg: 'Operação realizada com sucesso!' })
-            // }
+            if(err){
+                res.status(200).json({ color: 'red', icon: 'error', msg: 'Erro!' })
+            } else{
+                res.status(200).json({ color: 'green', icon: 'mood', msg: 'Operação realizada com sucesso!' })
+            }
         })
     }
 }
 /* FIM POST*/
 
 /* DELETE */
-function deletePagar(id, callback){
-    db.pool.query(`DELETE FROM pagar WHERE n_pagar in (${id})`, function(err, res){
+function deleteContab(id, callback){
+    db.pool.query(`DELETE FROM contab WHERE ncontab in (${id})`, function(err, res){
         if(err){
             callback(err)
         } else{
@@ -69,7 +81,7 @@ function deletePagar(id, callback){
 exports.delete = (req, res) =>{
     const id = req.params.id
     const arrayId = id.split(/\s*,\s*/)
-    deletePagar(arrayId, function(err){
+    deleteContab(arrayId, function(err){
         if(err){
             res.sendStatus(500)
         } else{
@@ -80,8 +92,8 @@ exports.delete = (req, res) =>{
 /* FIM DELETE */
 
 /* PUT */
-function updatePagar(n, nlanc, valor, data, nformapagar, obspagar, pagopagar, callback){
-    db.pool.query(`UPDATE pagar SET nlanc = '${nlanc}', vlrpagar = '${valor}', dtpagar = '${data}', nformapagar = '${nformapagar}', obspagar = '${obspagar}', pagopagar = '${pagopagar}' WHERE n_pagar = ${n} RETURNING *`, function(err, res){
+function updateContab(ncontab, datacontab, nlanc, nconta, tipocontab, valorcontab, obscontab, callback){
+    db.pool.query(`UPDATE contab SET datacontab = '${datacontab}', nlanc = '${nlanc}', nconta = '${nconta}', tipocontab = '${tipocontab}', valorcontab = '${valorcontab}', obscontab = '${obscontab}' WHERE ncontab = ${ncontab} RETURNING *`, function(err, res){
         if (err) {
             callback(err, null)
         } else {
@@ -89,43 +101,21 @@ function updatePagar(n, nlanc, valor, data, nformapagar, obspagar, pagopagar, ca
         }
     })
 }
-
-function updateSemRegPagar(n, valor, data, nformapagar, obspagar, pagopagar, callback){
-    db.pool.query(`UPDATE pagar SET vlrpagar = '${valor}', dtpagar = '${data}', nformapagar = '${nformapagar}', obspagar = '${obspagar}', pagopagar = '${pagopagar}' WHERE n_pagar = ${n} RETURNING *`, function(err, res){
-        if (err) {
-            callback(err, null)
-        } else {
-            callback(null, res.rows[0])
-        }
-    })
-}
-
 
 exports.put = (req, res) =>{
-    const n = req.params.id
+    const ncontab = req.params.id
+    const datacontab = req.body.datacontab
     const nlanc = req.body.nlanc
-    const vlrpagar = req.body.vlrpagar
-    const dtpagar= req.body.dtpagar
-    const nformapagar = req.body.nformapagar
-    const obspagar = req.body.obspagar
-    const pagopagar = req.body.pagopagar
-    if(nlanc){
-        updatePagar(n, nlanc, vlrpagar, dtpagar, nformapagar, obspagar, pagopagar, function(err){
+    const nconta= req.body.nconta
+    const tipocontab = req.body.tipocontab
+    const valorcontab = req.body.valorcontab
+    const obscontab = req.body.obscontab
+        updateContab(ncontab, datacontab, nlanc, nconta, tipocontab, valorcontab, obscontab, function(err){
             if (err) {
                 res.sendStatus(500)
             } else {
                 res.sendStatus(200)
             }
         })
-    }else {
-        updateSemRegPagar(n, vlrpagar, dtpagar, nformapagar, obspagar, pagopagar, function(err){
-            if (err) {
-                res.sendStatus(500)
-            } else {
-                res.sendStatus(200)
-            }
-        })
-    }
-
 }
 /* FIM PUT */
