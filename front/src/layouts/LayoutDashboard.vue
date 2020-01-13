@@ -25,6 +25,9 @@
         <q-toolbar-title>
           <q-icon name="attach_money" size="28px" />Financeiro
         </q-toolbar-title>
+        <q-toolbar-btn>
+          <q-btn color="white" text-color="primary" icon="new_releases" round dense unelevated/>
+        </q-toolbar-btn>
       </q-toolbar>
     </q-header>
     <!-- (Optional) A Drawer; you can add one more with side="right" or change this one's side -->
