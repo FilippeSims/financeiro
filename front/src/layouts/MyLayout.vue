@@ -44,7 +44,6 @@ export default {
     logar () {
       window.axios.post(`${process.env.API}/login`, this.login)
         .then(res => {
-          console.log(res)
           if (res.data.token !== null) {
             localStorage.setItem('token', res.data.token)
             window.location = '/sistema'

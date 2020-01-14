@@ -195,11 +195,9 @@ export default {
     },
     nextReg () {
       this.pageNumber++
-      console.log('next')
     },
     prevPage () {
       this.pageNumber--
-      console.log('prev')
     },
     getList () {
       window.axios.get(`${process.env.API}/pagar`, { headers: { 'x-access-token': this.token.tokenUser } }).then(res => {

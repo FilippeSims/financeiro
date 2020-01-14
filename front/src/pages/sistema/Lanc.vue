@@ -492,11 +492,9 @@ export default {
     },
     nextReg () {
       this.pageNumber++
-      console.log('next')
     },
     prevPage () {
       this.pageNumber--
-      console.log('prev')
     },
     getContab () {
       window.axios.get(`${process.env.API}/planocontas`, { headers: { 'x-access-token': this.token.tokenUser } }).then(res => {
