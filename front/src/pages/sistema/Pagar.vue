@@ -97,7 +97,7 @@
             <td data-label="Número Pagar" v-if="paga.n_pagar === null"><q-badge class="q-ml-sm" color="red">NULL</q-badge></td>
             <td data-label="Número Pagar" v-else>{{ paga.n_pagar }}</td>
             <td data-label="Valor Pagar" v-if="paga.vlrpagar === null"><q-badge class="q-ml-sm" color="red">NULL</q-badge></td>
-            <td data-label="Valor Pagar" v-else> {{ 'R$ ' + formatPrice(paga.vlrpagar) }} </td>
+            <td data-label="Valor Pagar" v-else> {{ 'R$ ' + paga.vlrpagar }} </td>
             <td data-label="Data Pagar" v-if="paga.dtpagar === null"><q-badge class="q-ml-sm" color="red">NULL</q-badge></td>
             <td data-label="Data Pagar" v-else>{{ paga.dtpagar | formatDate }}</td>
             <td data-label="Forma" v-if="paga.nformapagar === null"><q-badge class="q-ml-sm" color="red">NULL</q-badge></td>
@@ -178,10 +178,6 @@ export default {
     },
     editarShow (status) {
       this.editarForm = status
-    },
-    formatPrice (value) {
-      let val = (value / 1).toFixed(2).replace('.', ',')
-      return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')
     },
     lancn (n) {
       const lanc = this.lancs

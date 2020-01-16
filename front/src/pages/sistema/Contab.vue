@@ -136,10 +136,6 @@ export default {
     editarShow (status) {
       this.editarForm = status
     },
-    formatPrice (value) {
-      let val = (value / 1).toFixed(2).replace('.', ',')
-      return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')
-    },
     getList () {
       window.axios.get(`${process.env.API}/contab`).then(res => {
         this.contabs = res.data

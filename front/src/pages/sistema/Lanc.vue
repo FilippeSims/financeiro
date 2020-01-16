@@ -16,7 +16,7 @@
         <q-input dense filled label="Parcelas" hint="Número de Parcelas" lazy-rules :rules="[ val => val && val.length > 0 || 'Por favor digite um número de parcelas!', val => val !== '0' || 'O número de parcelas não pode ser 0!']" v-model="toSave.nparcelas"/>
         <div class="previa" v-if="previaView === true">
           <li class="listReg" v-for="e in parseInt(toSave.nparcelas)" :key="e">
-            {{ e + 'x: ' + formatPrice(toSave.vlrlanc / toSave.nparcelas) + ' | ' + dataHoje(toSave.formaP.vencimento, e) }}
+            {{ e + 'x: ' + (toSave.vlrlanc / toSave.nparcelas) + ' | ' + dataHoje(toSave.formaP.vencimento, e) }}
           </li>
           <q-toggle v-model="previewConfere" checked-icon="check" unchecked-icon="clear" color="green" label="Você conferiu os dados?" keep-color/>
           <br>
@@ -88,7 +88,7 @@
             </q-badge>
           </li>
           <q-input dense filled label="Número Registro" hint="Número do registro" v-model="toSave.nreg" disable/>
-          <q-input dense filled prefix="R$" mask="#.##" reverse-fill-mask label="Valor" hint="Valor do lançamento" v-model="toSave.valorreg" />
+          <q-input dense filled prefix="R$" label="Valor" hint="Valor do lançamento" v-model="toSave.valorreg" />
           <q-input dense filled v-model="toSave.dtreg" label="Data" hint="Data do lançamento" />
           <q-input dense filled v-model="toSave.objlanc" label="Objeto" hint="Objeto do lançamento" />
           <q-input dense filled v-model="toSave.partelanc" label="Parte" hint="Parte do lançamento" />
@@ -101,7 +101,7 @@
       <div id="semRegistroLanc" v-else>
         <q-form @submit.prevent="save()" class="q-gutter-md">
           <q-input dense filled v-model="toSave.regn" label="Número Registro" hint="Número do Registro" v-if="editarForm === true" />
-          <q-input dense filled prefix="R$" mask="#.##" reverse-fill-mask v-model="toSave.vlrlanc" label="Valor" hint="Valor do lançamento" />
+          <q-input dense filled prefix="R$" reverse-fill-mask v-model="toSave.vlrlanc" label="Valor" hint="Valor do lançamento" />
           <!-- <q-input filled v-model="toSave.dtlanc" label="Data" hint="Data do lançamento" /> -->
           <q-date v-model="toSave.dtlanc" minimal/>
           <q-input dense filled v-model="toSave.objlanc" label="Objeto" hint="Objeto do lançamento" />
@@ -143,7 +143,7 @@
             <td data-label="Número Reg" v-if="lanc.nlanc === null"><q-badge class="q-ml-sm" color="red">NULL</q-badge></td>
             <td data-label="Número Lanc" v-else>{{ lanc.nlanc }}</td>
             <td data-label="Número Reg" v-if="lanc.vlrlanc === null"><q-badge class="q-ml-sm" color="red">NULL</q-badge></td>
-            <td data-label="Valor Lanc" v-else> {{ 'R$ ' + formatPrice2(lanc.vlrlanc) }} </td>
+            <td data-label="Valor Lanc" v-else> {{ 'R$ ' + lanc.vlrlanc }} </td>
             <td data-label="Número Reg" v-if="lanc.dtlanc === null"><q-badge class="q-ml-sm" color="red">NULL</q-badge></td>
             <td data-label="Data Lanc" v-else>{{ lanc.dtlanc | formatDate }}</td>
             <td data-label="Número Reg" v-if="lanc.objlanc === null"><q-badge class="q-ml-sm" color="red">NULL</q-badge></td>
@@ -459,14 +459,6 @@ export default {
           })
         }
       }
-    },
-    formatPrice (value) {
-      let val = (value / 1).toFixed(2).replace('.', ',')
-      return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
-    },
-    formatPrice2 (value) {
-      let val = (value / 1).toFixed(2).replace('.', ',')
-      return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')
     },
     dataHoje (dia, e) {
       let hoje = new Date()

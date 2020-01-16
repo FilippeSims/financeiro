@@ -58,7 +58,7 @@
             <td data-label="Número Reg" v-if="doc.ndoc === null"><q-badge class="q-ml-sm" color="red">NULL</q-badge></td>
             <td data-label="Número Reg" v-else> {{ doc.ndoc }} </td>
             <td data-label="Valor Reg" v-if="doc.valordoc === null"><q-badge class="q-ml-sm" color="red">NULL</q-badge></td>
-            <td data-label="Valor Reg" v-else> {{ 'R$ ' + formatPrice(doc.valordoc) }} </td>
+            <td data-label="Valor Reg" v-else> {{ 'R$ ' + doc.valordoc }} </td>
             <td data-label="Data Reg" v-if="doc.dtdoc === null"><q-badge class="q-ml-sm" color="red">NULL</q-badge></td>
             <td data-label="Data Reg" v-else> {{ doc.dtdoc | formatDate }} </td>
             <td data-label="Observação Reg" v-if="doc.fornecedordoc === null"><q-badge class="q-ml-sm" color="red">NULL</q-badge></td>
@@ -100,10 +100,6 @@ export default {
     },
     editarShow (status) {
       this.editarForm = status
-    },
-    formatPrice (value) {
-      let val = (value / 1).toFixed(2).replace('.', ',')
-      return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')
     },
     getList () {
       window.axios.get(`${process.env.API}/doc`).then(res => {
