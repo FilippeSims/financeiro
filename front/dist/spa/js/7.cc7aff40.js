@@ -1,0 +1,1 @@
+(window["webpackJsonp"]=window["webpackJsonp"]||[]).push([[7],{"8b24":function(e,n,a){"use strict";a.r(n);var t=function(){var e=this,n=e.$createElement,a=e._self._c||n;return a("q-page")},c=[],l={name:"PageIndex"},o=l,s=a("2877"),u=a("eebe"),p=a.n(u),r=a("9989"),i=Object(s["a"])(o,t,c,!1,null,null,null);n["default"]=i.exports;p()(i,"components",{QPage:r["a"]})}}]);
