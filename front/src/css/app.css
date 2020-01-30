@@ -1,3 +1,13 @@
+.balance-dash h5{
+  margin: 0;
+  padding: 0;
+}
+
+.balance-dash h4{
+  margin: 0;
+  padding: 0;
+}
+
 table {
     border: 1px solid #ccc;
     border-collapse: collapse;
@@ -130,4 +140,9 @@ table {
   .selectContab2{
     width: 100%;
     max-width: 28%;
+  }
+
+  .detalhes{
+    padding: 10px;
+    float: left;
   }

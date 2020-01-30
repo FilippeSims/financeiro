@@ -26,7 +26,13 @@
           <q-icon name="attach_money" size="28px" />Financeiro
         </q-toolbar-title>
         <q-toolbar-btn>
-          <q-btn color="white" text-color="primary" icon="new_releases" round dense unelevated/>
+          <q-btn color="white" text-color="primary" icon="new_releases" round dense unelevated>
+            <q-popup-proxy :offset="[5, 5]">
+              <div class="detalhes">
+              aaaaaaaaaaaa
+              </div>
+            </q-popup-proxy>
+          </q-btn>
         </q-toolbar-btn>
       </q-toolbar>
     </q-header>
