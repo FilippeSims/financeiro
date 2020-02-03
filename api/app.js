@@ -21,6 +21,7 @@ var planoContasRotas = require('./app/rotas/planoContasRotas')
 var verificaPlanoConta = require('./app/rotas/verificaPlanoContaRotas')
 var registrarUsuarioRotas = require('./app/rotas/registrarUsuarios')
 var loginUsuarioRotas = require('./app/rotas/loginRotas')
+var saldoPlanoContasRotas = require('./app/rotas/saldoPlanoContasRotas')
 
 var app = express();
 
@@ -63,6 +64,7 @@ app.use('/api/sistema/v1/planocontas', planoContasRotas)
 app.use('/api/sistema/v1/verificaPlanoConta', verificaPlanoConta)
 app.use('/api/sistema/v1/usuarios', registrarUsuarioRotas)
 app.use('/api/sistema/v1/login', loginUsuarioRotas)
+app.use('/api/sistema/v1/saldoPlanoContas', saldoPlanoContasRotas)
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

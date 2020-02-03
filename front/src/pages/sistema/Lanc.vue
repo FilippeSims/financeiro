@@ -30,7 +30,6 @@
       <div id="tituloForm" class="q-mt-sm" v-if="contabStatus === true">
         <b>Contab</b>
       </div>
-      {{ toSave }}
       <q-form @submit.prevent="contab()" class="q-gutter-md q-mt-sm">
         <q-input dense filled label="Número lançamento" v-model="toSave.nlanc" disable/>
         <q-input dense filled label="Valor lançamento" v-model="toSave.vlrlanc"/>
@@ -42,8 +41,7 @@
           </div>
         <q-input filled dense label="Observação" hint="Observação do registro" hide-underline="true" type="textarea" rows="2" v-model="toSave.obsContab"/>
         <q-input dense filled label="Verificação Contab" v-model="verificacaoContab"/>
-        <q-btn color="green" icon="help" v-on:click="testando(quantidadeForm, toSave.vlrlanc)"  class="q-mt-sm q-mb-sm float-left" unelevated dense/>
-        <q-btn type="submit" color="green" icon="send" class="q-mt-sm q-mb-sm float-left" unelevated dense/>
+        <q-btn color="green" icon="send" v-on:click="testando(quantidadeForm, toSave.vlrlanc)"  class="q-mt-sm q-mb-sm float-left" unelevated dense/>
       </q-form>
     </div>
     <div id="formLanc" v-if="inserirForm === true || editarForm === true && checkReg.length < 2 && checkReg.length != 0">
