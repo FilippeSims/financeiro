@@ -5,10 +5,10 @@
       <q-breadcrumbs-el label="Registro" icon="widgets" to="/sistema/registro" />
     </q-breadcrumbs>
     <div id="tituloForm" v-if="inserirForm === true">
-      <b>Inserir Plano Conta</b>
+      <b>Inserir Plano Contas</b>
     </div>
     <div id="tituloForm" v-if="editarForm === true && checkReg.length < 2 && checkReg.length != 0" >
-      <b>Editar Plano Conta</b>
+      <b>Editar Plano Contas</b>
     </div>
     {{ toSave }}
       <q-form @submit.prevent="save()" class="q-gutter-md q-mt-sm" v-if="inserirForm === true || editarForm === true && checkReg.length < 2 && checkReg.length != 0">
