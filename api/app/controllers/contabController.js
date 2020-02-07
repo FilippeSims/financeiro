@@ -25,6 +25,7 @@ exports.get = (req, res) => {
 /* POST */
 function criaContab(data, nlanc, nconta, tipoContab, valor, obsContab, callback){
     db.pool.query('INSERT INTO contab (datacontab, nlanc, nconta, tipocontab, valorcontab, obscontab) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *', [data, nlanc, nconta, tipoContab, valor, obsContab], function(err, res){
+        console.log(err, res)
         if(err){
             callback(err, null)
         } else{

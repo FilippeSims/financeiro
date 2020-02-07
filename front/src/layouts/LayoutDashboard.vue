@@ -117,6 +117,42 @@ const menuPai = [
     rule: 'guest'
   },
   {
+    icon: 'home',
+    label: 'Lançar',
+    submenu: true,
+    pai: 'registro',
+    to: null,
+    separator: true,
+    rule: 'guest'
+  },
+  {
+    icon: 'home',
+    label: 'Contabilizar',
+    submenu: true,
+    pai: 'registro',
+    to: null,
+    separator: true,
+    rule: 'guest'
+  },
+  {
+    icon: 'home',
+    label: 'Pagar',
+    submenu: true,
+    pai: 'registro',
+    to: null,
+    separator: true,
+    rule: 'guest'
+  },
+  {
+    icon: 'home',
+    label: 'Consultar',
+    submenu: true,
+    pai: 'registro',
+    to: null,
+    separator: true,
+    rule: 'guest'
+  },
+  {
     icon: 'logout',
     label: 'Sair',
     submenu: false,

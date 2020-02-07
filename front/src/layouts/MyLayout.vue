@@ -3,7 +3,7 @@
     <q-header>
       <q-toolbar class="bg-grey-10" >
         <q-toolbar-title>
-            <q-icon name="attach_money" size="28px"/>$Financeiro$
+            <q-icon name="attach_money" size="28px"/>Financeiro
         </q-toolbar-title>
         <q-btn color="yellow-9" icon="account_circle" label="Login" rounded unelevated>
           <q-menu transition-show="flip-right" transition-hide="flip-left" :offset="[0, 4]" unelevated>
